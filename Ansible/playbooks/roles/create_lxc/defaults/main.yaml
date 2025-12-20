@@ -14,5 +14,5 @@ memory: 1024
 disk: "data"
 ip_address: "dhcp"
 onboot: true
-netif: '{"net0":"name=eth0,bridge=vmbr0,ip={{ ip_address }}"}'
+netif: '{"net0":"name=eth0,bridge=vmbr0,ip={{ ip_address }},gw=192.168.100.1,tag=100"}'
 public_key: "{{ proxmox_public_key }}"

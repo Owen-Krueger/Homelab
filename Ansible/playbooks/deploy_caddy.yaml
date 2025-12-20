@@ -1,24 +1,24 @@
 ---
 # Creates a new LXC container for Caddy.
-- name: Deploy Caddy LXC Container
-  hosts: proxmox
-  gather_facts: no
-  collections:
-    - community.proxmox
+# - name: Deploy Caddy LXC Container
+#   hosts: proxmox
+#   gather_facts: no
+#   collections:
+#     - community.proxmox
 
-  vars_files:
-    - secrets.yaml
+#   vars_files:
+#     - secrets.yaml
 
-  vars:
-    container_id: 110
-    container_name: "caddy"
-    cpus: 1
-    memory: 1024
-    disk: "data"
-    ip_address: "192.168.100.151"
+#   vars:
+#     container_id: 110
+#     container_name: "caddy"
+#     cpus: 1
+#     memory: 1024
+#     disk: "data"
+#     ip_address: "192.168.100.151"
 
-  roles:
-    - create_lxc
+#   roles:
+#     - create_lxc
 
 # Configures the container, adding a non-root user to use for SSH.
 - name: Configure Caddy
@@ -26,12 +26,14 @@
   remote_user: root # root needs to be used initially to set up ansible user.
   gather_facts: yes
   become: yes
+  become_user: root
 
   vars_files:
     - secrets.yaml
 
   vars:
     config_user: owen
+    ansible_ssh_user: root
 
   roles:
     - configure_container

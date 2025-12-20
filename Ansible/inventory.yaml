@@ -4,7 +4,7 @@ all:
       ansible_host: 192.168.200.155
       ansible_user: root
     caddy:
-      ansible_host: 192.168.200.171 # Update with real value
+      ansible_host: 192.168.100.151
       ansible_user: owen
       ansible_python_interpreter: /usr/bin/python3
     jellyfin:
