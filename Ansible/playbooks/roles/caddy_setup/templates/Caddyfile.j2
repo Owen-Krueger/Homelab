@@ -1,0 +1,307 @@
+# Global config
+{
+    # Cloudflare DNS
+    email {{caddy_cloudflare_username}}
+    acme_dns cloudflare {{caddy_cloudflare_api_key}}
+
+    # Crowdsec
+    crowdsec {
+        api_url http://127.0.0.1:8080
+        api_key 
+        ticker_interval 15s
+    }
+    log {
+        output file /var/log/caddy/access.log {
+        roll_size 30MiB
+        roll_keep 5
+    }
+  }
+}
+
+# Authentik
+auth.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    reverse_proxy {{caddy_authentik_ip}}
+
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}
+
+# Firefly III
+budget.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    route {
+        # always forward outpost path to actual outpost
+        reverse_proxy /outpost.goauthentik.io/* {{caddy_authentik_url}}
+
+        # forward authentication to outpost
+        forward_auth {{caddy_authentik_url}} {
+            uri /outpost.goauthentik.io/auth/caddy
+
+            # capitalization of the headers is important, otherwise they will be empty
+            copy_headers X-Authentik-Username X-Authentik-Groups X-Authentik-Entitlements X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt X-Authentik-Meta-Jwks X-Authentik-Meta-Outpost X-Authentik-Meta-Provider X-Authentik-Meta-App X-Authentik-Meta-Version
+
+            # optional, in this config trust all private ranges, should probably be set to the outposts IP
+            trusted_proxies private_ranges
+        }
+
+        reverse_proxy {{caddy_firefly_ip}}
+    }
+
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}
+
+# Nextcloud
+cloud.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    reverse_proxy {{caddy_nextcloud_ip}}
+
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}
+
+# Dockge
+docker.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    reverse_proxy {{caddy_dockge_ip}}
+
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}
+
+# Paperless-ngx
+documents.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    reverse_proxy {{caddy_paperless_ip}}
+
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}
+
+# ESPHome
+esp.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    reverse_proxy {{caddy_esp_ip}}
+
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}
+
+# Home Assistant
+hassio.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    reverse_proxy {{caddy_homeassistant_ip}}
+
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}
+
+# Karakeep
+hoarder.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    reverse_proxy {{caddy_karakeep_ip}}
+
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}
+
+# Snipe-IT
+inventory.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    reverse_proxy {{caddy_snipeit_ip}}
+
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}
+
+# Joplin
+joplin.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    reverse_proxy {{caddy_joplin_ip}}
+    
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}
+
+# Navidrome
+music.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    reverse_proxy {{caddy_navidrome_ip}}
+
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}
+
+# Truenas
+nas.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    reverse_proxy {{caddy_truenas_ip}}
+
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}
+
+# Immich
+photos.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    reverse_proxy {{caddy_immich_ip}}
+
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}
+
+# Plex
+plex.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    reverse_proxy {{caddy_plex_ip}}
+
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}
+
+# Proxmox
+proxmox.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    reverse_proxy {{caddy_proxmox_ip}}
+
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}
+
+# IT Tools
+tools.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    reverse_proxy {{caddy_ittools_ip}}
+
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}
+
+# Jellyfin
+videos.owenkrueger.com {
+    encode gzip
+    crowdsec
+
+    reverse_proxy {{caddy_jellyfin_ip}}
+
+    tls {
+        protocols tls1.3
+    }
+
+    log {
+        output file /var/log/caddy/caddy.log
+    }
+}

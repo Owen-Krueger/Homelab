@@ -1,0 +1,51 @@
+---
+- name: Download and install Caddy
+  ansible.builtin.get_url:
+    url: https://github.com/caddyserver/caddy/releases/latest/download/caddy_linux_amd64
+    dest: /usr/local/bin/caddy
+    mode: '0755'
+    owner: root
+    group: root
+  become: yes
+
+- name: Create Caddy user
+  ansible.builtin.user:
+    name: caddy
+    system: yes
+    shell: /usr/sbin/nologin
+    group: caddy
+    createhome: no
+  become: yes
+
+- name: Create Caddy config directory
+  ansible.builtin.file:
+    path: /etc/caddy
+    state: directory
+    owner: caddy
+    group: caddy
+    mode: '0755'
+  become: yes
+
+- name: Template Caddyfile
+  ansible.builtin.template:
+    src: Caddyfile.j2
+    dest: /etc/caddy/Caddyfile
+    owner: caddy
+    group: caddy
+    mode: '0644'
+  become: yes
+  notify: Reload Caddy
+
+- name: Template systemd service
+  ansible.builtin.template:
+    src: caddy.service.j2
+    dest: /etc/systemd/system/caddy.service
+    mode: '0644'
+  become: yes
+
+- name: Enable and start Caddy service
+  ansible.builtin.systemd:
+    name: caddy
+    enabled: yes
+    state: started
+  become: yes

@@ -1,0 +1,61 @@
+- name: Create and prep Home-Assistant LXC
+  hosts: pve
+  gather_facts: no
+  vars:
+    ct_id: "111"
+    ct_hostname: "homeassistant"
+    ct_cores: 2
+    ct_memory: 2048
+    ct_swap: 0
+    ct_storage: "data"
+    ct_template: "local:vztmpl/debian-12-standard_12.0-1_amd64.tar.zst"
+    ct_net:
+      name: eth0
+      ip: "dhcp"
+      bridge: "vmbr0"
+    pub_key: "{{ pub_key }}"
+
+  tasks:
+    # 1. create container (no pubkey here – module limitation)
+    - name: Create LXC container
+      community.proxmox.proxmox:
+        api_host: "{{ proxmox_api_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_password: "{{ proxmox_api_password }}"
+        node: "{{ proxmox_node }}"
+        vmid: "{{ ct_id }}"
+        hostname: "{{ ct_hostname }}"
+        cores: "{{ ct_cores }}"
+        memory: "{{ ct_memory }}"
+        swap: "{{ ct_swap }}"
+        storage: "{{ ct_storage }}"
+        ostemplate: "{{ ct_template }}"
+        netif: "{{ ct_net | to_json }}"
+        unprivileged: yes
+        start: yes
+        timeout: 300
+        pub_key:
+      register: container
+
+    # 2. wait until it answers to pct commands
+    - name: Wait for container to be online
+      ansible.builtin.command: "pct status {{ ct_id }}"
+      register: status
+      until: status.stdout.find("running") != -1
+      retries: 20
+      delay: 5
+
+    # 3. push SSH public key into root’s authorized_keys
+    - name: Ensure /root/.ssh exists
+      ansible.builtin.command: "pct exec {{ ct_id }} -- mkdir -p /root/.ssh"
+    - name: Inject public key
+      ansible.builtin.shell: |
+        echo "{{ pub_key }}" | pct push {{ ct_id }} /dev/stdin /root/.ssh/authorized_keys
+        pct exec {{ ct_id }} -- chmod 600 /root/.ssh/authorized_keys
+
+    # 4. run the community helper script
+    - name: Run Home-Assistant helper script
+      ansible.builtin.command: |
+        pct exec {{ ct_id }} -- bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/homeassistant.sh)"
+      register: script_out
+    - debug: var=script_out.stdout_lines

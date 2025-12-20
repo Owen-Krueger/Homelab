@@ -1,0 +1,18 @@
+# Host values
+proxmox_host: "192.168.200.155"
+proxmox_user: "root@pam"
+proxmox_password: ""
+validate_certs: false
+
+# Container defaults
+container_id: null # Must be set per container
+hostname: "{{ container_name }}"
+container_name: "unnamed-container"
+image: "local:vztmpl/debian-12-standard_12.0-1_amd64.tar.zst"
+cpus: 1
+memory: 1024
+disk: "data"
+ip_address: "dhcp"
+onboot: true
+netif: '{"net0":"name=eth0,bridge=vmbr0,ip={{ ip_address }}"}'
+public_key: "{{ proxmox_public_key }}"

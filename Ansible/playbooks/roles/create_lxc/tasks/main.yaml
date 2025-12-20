@@ -1,0 +1,29 @@
+---
+- name: Create LXC Container
+  community.proxmox.proxmox:
+    api_host: "{{ proxmox_host }}"
+    api_user: "{{ proxmox_user }}"
+    api_password: "{{ proxmox_password }}"
+    validate_certs: "{{ validate_certs }}"
+
+    node: "{{ proxmox_node | default('pve') }}"
+    vmid: "{{ container_id }}"
+    hostname: "{{ hostname }}"
+    ostemplate: "{{ image }}"
+    cores: "{{ cpus }}"
+    memory: "{{ memory }}"
+    disk: "{{ disk }}"
+    cpus: "{{ cpus }}"
+    netif: "{{ netif }}"
+    ip_address: "{{ ip_address }}"
+    pubkey: "{{ proxmox_public_key }}"
+    onboot: "{{ onboot }}"
+    state: present
+    timeout: 300
+  register: lxc_result
+  become: yes
+
+# Output results
+- name: Debug container creation result
+  ansible.builtin.debug:
+    msg: "{{ lxc_result }}"

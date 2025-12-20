@@ -1,0 +1,9 @@
+---
+- name: Update Caddy LXC Container
+  hosts: caddy
+  gather_facts: yes
+  become: yes
+
+  roles:
+    - update_container
+    - caddy_setup

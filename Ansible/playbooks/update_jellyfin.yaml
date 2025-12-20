@@ -1,0 +1,8 @@
+---
+- name: Update Jellyfin LXC Container
+  hosts: jellyfin
+  gather_facts: yes
+  become: yes
+
+  roles:
+    - update_container

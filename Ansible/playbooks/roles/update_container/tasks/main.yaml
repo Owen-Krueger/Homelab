@@ -1,0 +1,21 @@
+---
+- name: Wait for container SSH to be available
+  ansible.builtin.wait_for_connection:
+    timeout: 60
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Upgrade all packages
+  ansible.builtin.apt:
+    #name: '*'
+    #state: latest
+    upgrade: safe  # or 'full' for major version upgrades
+
+- name: Reboot if kernel updated
+  ansible.builtin.reboot:
+    msg: "Rebooting after kernel update"
+  when: >
+    (ansible_facts.get('pkg_mgr', '') == 'apt') and
+    (ansible_facts.get('needs_reboot', false) | default(false))
