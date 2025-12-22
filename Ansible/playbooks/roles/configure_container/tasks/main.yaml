@@ -18,7 +18,7 @@
 - name: Ensure non-root user exists (optional)
   ansible.builtin.user:
     name: "{{ config_user | default('owen') }}"
-    password: "{{ owen_user_password }}"
+    password: "{{ owen_user_password | password_hash('sha512') }}" # Passwords must be hashed.
     shell: /bin/bash
     groups: sudo
     append: yes
@@ -26,7 +26,7 @@
   when: config_user is defined
 
 - name: Add public key for non-root user (optional)
-  ansible.builtin.authorized_key:
+  ansible.posix.authorized_key:
     user: "{{ config_user | default('owen') }}"
     state: present
     key: "{{ proxmox_public_key }}"
