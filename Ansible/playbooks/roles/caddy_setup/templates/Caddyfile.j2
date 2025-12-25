@@ -8,12 +8,7 @@
         # appsec_url http://localhost:7422
     }
 
-    log {
-        output file /var/log/caddy/access.log {
-        roll_size 30MiB
-        roll_keep 5
-    }
-  }
+    order crowdsec before reverse_proxy
 }
 
 # Authentik
@@ -24,12 +19,7 @@ auth.owenkrueger.com {
     reverse_proxy {{caddy_authentik_ip}}
 
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }
 
@@ -57,12 +47,7 @@ budget.owenkrueger.com {
     }
 
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }
 
@@ -74,12 +59,7 @@ cloud.owenkrueger.com {
     reverse_proxy {{caddy_nextcloud_ip}}
 
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }
 
@@ -91,12 +71,7 @@ docker.owenkrueger.com {
     reverse_proxy {{caddy_dockge_ip}}
 
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }
 
@@ -108,12 +83,7 @@ documents.owenkrueger.com {
     reverse_proxy {{caddy_paperless_ip}}
 
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }
 
@@ -125,12 +95,7 @@ esp.owenkrueger.com {
     reverse_proxy {{caddy_esp_ip}}
 
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }
 
@@ -142,12 +107,7 @@ hassio.owenkrueger.com {
     reverse_proxy {{caddy_homeassistant_ip}}
 
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }
 
@@ -159,12 +119,7 @@ hoarder.owenkrueger.com {
     reverse_proxy {{caddy_karakeep_ip}}
 
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }
 
@@ -176,12 +131,7 @@ inventory.owenkrueger.com {
     reverse_proxy {{caddy_snipeit_ip}}
 
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }
 
@@ -193,12 +143,7 @@ joplin.owenkrueger.com {
     reverse_proxy {{caddy_joplin_ip}}
     
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }
 
@@ -210,12 +155,7 @@ music.owenkrueger.com {
     reverse_proxy {{caddy_navidrome_ip}}
 
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }
 
@@ -227,12 +167,7 @@ nas.owenkrueger.com {
     reverse_proxy {{caddy_truenas_ip}}
 
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }
 
@@ -244,12 +179,7 @@ photos.owenkrueger.com {
     reverse_proxy {{caddy_immich_ip}}
 
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }
 
@@ -261,12 +191,7 @@ plex.owenkrueger.com {
     reverse_proxy {{caddy_plex_ip}}
 
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }
 
@@ -278,12 +203,7 @@ proxmox.owenkrueger.com {
     reverse_proxy {{caddy_proxmox_ip}}
 
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }
 
@@ -295,12 +215,7 @@ tools.owenkrueger.com {
     reverse_proxy {{caddy_ittools_ip}}
 
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }
 
@@ -312,11 +227,6 @@ videos.owenkrueger.com {
     reverse_proxy {{caddy_jellyfin_ip}}
 
     tls {
-        protocols tls1.3
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-
-    log {
-        output file /var/log/caddy/caddy.log
     }
 }

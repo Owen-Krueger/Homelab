@@ -31,7 +31,7 @@
   set_fact:
     crowdsec_api_key: "{{ (bouncer_content.stdout | from_yaml).api_key }}"
 
-# Configure Caddy and xcaddy
+# # Configure Caddy and xcaddy
 - name: Ensure Dependency is Absent (caddy-stable-archive-keyrings.gpg)
   ansible.builtin.file:
     path: /usr/share/keyrings/caddy-stable-archive-keyring.gpg
@@ -98,23 +98,14 @@
 - name: Switch GO Toolchain to {{ go_version }}
   ansible.builtin.shell: go env -w GOTOOLCHAIN=go{{ go_version }}
 
-- name: Install Cloudflare DNS Provider Module
-  ansible.builtin.shell: xcaddy build --with github.com/caddy-dns/cloudflare
-
-# - name: Install Crowdsec Module
-#   ansible.builtin.shell: xcaddy build --with github.com/hslatman/caddy-crowdsec-bouncer/crowdsec
-
-# - name: Get CrowdSec Module
-#   ansible.builtin.shell: |
-#     go get github.com/hslatman/caddy-crowdsec-bouncer/http
-  # go get github.com/hslatman/caddy-crowdsec-bouncer/layer4
-  # go get github.com/hslatman/caddy-crowdsec-bouncer/appsec
-
-- name: Install CrowdSec Module
+- name: Build Caddy Modules
   ansible.builtin.shell: xcaddy build \
+    --with github.com/caddy-dns/cloudflare
     --with github.com/hslatman/caddy-crowdsec-bouncer/http \
     --with github.com/hslatman/caddy-crowdsec-bouncer/layer4 \
-    --with github.com/hslatman/caddy-crowdsec-bouncer/appsec
+    --with github.com/hslatman/caddy-crowdsec-bouncer/appsec \
+    --output /usr/bin/caddy
+  become: yes
 
 - name: Create Caddy config directory
   ansible.builtin.file:
@@ -133,11 +124,17 @@
     group: caddy
     mode: '0644'
   become: yes
-  notify: Reload Caddy
 
-- name: Reload systemd
-  ansible.builtin.systemd_service:
+- name: Template systemd service
+  ansible.builtin.template:
+    src: caddy.service.j2
+    dest: /etc/systemd/system/caddy.service
+    mode: '0644'
+  become: yes
+
+- name: Enable and start Caddy service
+  ansible.builtin.systemd:
     name: caddy
-    state: restarted
-    daemon_reload: true
+    enabled: yes
+    state: started
   become: yes
