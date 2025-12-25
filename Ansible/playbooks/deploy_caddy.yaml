@@ -21,22 +21,22 @@
 #     - create_lxc
 
 # Configures the container, adding a non-root user to use for SSH.
-# - name: Configure Caddy
-#   hosts: caddy
-#   remote_user: root # root needs to be used initially to set up ansible user.
-#   gather_facts: yes
-#   become: yes
-#   become_user: root
+- name: Configure Caddy
+  hosts: caddy
+  remote_user: root # root needs to be used initially to set up ansible user.
+  gather_facts: yes
+  become: yes
+  become_user: root
 
-#   vars_files:
-#     - secrets.yaml
+  vars_files:
+    - secrets.yaml
 
-#   vars:
-#     config_user: owen
-#     ansible_ssh_user: root
+  vars:
+    config_user: owen
+    ansible_ssh_user: root
 
-#   roles:
-#     - configure_container
+  roles:
+    - configure_container
 
 # Installs Caddy and sets up a Caddyfile.
 - name: Setup Caddy
@@ -45,6 +45,10 @@
 
   vars_files:
     - secrets.yaml
+
+  vars:
+    # Get version from https://go.dev/dl/
+    go_version: '1.25.0'
   
   roles:
     - caddy_setup

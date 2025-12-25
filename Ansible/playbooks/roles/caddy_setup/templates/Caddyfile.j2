@@ -1,15 +1,13 @@
 # Global config
 {
-    # Cloudflare DNS
-    email {{caddy_cloudflare_username}}
-    acme_dns cloudflare {{caddy_cloudflare_api_key}}
-
     # Crowdsec
     crowdsec {
-        api_url http://127.0.0.1:8080
-        api_key 
+        api_url http://localhost:8080
+        api_key {{ crowdsec_api_key }}
         ticker_interval 15s
+        # appsec_url http://localhost:7422
     }
+
     log {
         output file /var/log/caddy/access.log {
         roll_size 30MiB
@@ -27,6 +25,7 @@ auth.owenkrueger.com {
 
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
@@ -59,6 +58,7 @@ budget.owenkrueger.com {
 
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
@@ -75,6 +75,7 @@ cloud.owenkrueger.com {
 
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
@@ -91,6 +92,7 @@ docker.owenkrueger.com {
 
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
@@ -107,6 +109,7 @@ documents.owenkrueger.com {
 
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
@@ -123,6 +126,7 @@ esp.owenkrueger.com {
 
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
@@ -139,6 +143,7 @@ hassio.owenkrueger.com {
 
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
@@ -155,6 +160,7 @@ hoarder.owenkrueger.com {
 
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
@@ -171,6 +177,7 @@ inventory.owenkrueger.com {
 
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
@@ -187,6 +194,7 @@ joplin.owenkrueger.com {
     
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
@@ -203,6 +211,7 @@ music.owenkrueger.com {
 
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
@@ -219,6 +228,7 @@ nas.owenkrueger.com {
 
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
@@ -235,6 +245,7 @@ photos.owenkrueger.com {
 
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
@@ -251,6 +262,7 @@ plex.owenkrueger.com {
 
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
@@ -267,6 +279,7 @@ proxmox.owenkrueger.com {
 
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
@@ -283,6 +296,7 @@ tools.owenkrueger.com {
 
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
@@ -299,6 +313,7 @@ videos.owenkrueger.com {
 
     tls {
         protocols tls1.3
+        dns cloudflare {{ caddy_cloudflare_api_key }}
     }
 
     log {
