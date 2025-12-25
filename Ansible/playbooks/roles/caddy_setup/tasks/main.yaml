@@ -95,8 +95,11 @@
 # For some reason, letting the toolchain be set to "AUTO" causes xcaddy
 # to fail. The fix for this is to manually set the toolchain version
 # prior to running the build.
-- name: Switch GO Toolchain to {{ go_version }}
-  ansible.builtin.shell: go env -w GOTOOLCHAIN=go{{ go_version }}
+# - name: Switch GO Toolchain to {{ go_version }}
+#  ansible.builtin.shell: go env -w GOTOOLCHAIN=go{{ go_version }}
+
+- name: Install GO Toolchain
+  ansible.builtin.shell: go install golang.org/dl/go{{ go_version }}@latest
 
 - name: Build Caddy Modules
   ansible.builtin.shell: xcaddy build \

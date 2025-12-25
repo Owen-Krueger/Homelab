@@ -46,8 +46,11 @@
   gather_facts: no
 
   tasks:
-    - name: Create mount point
+    - name: Create mount point for music directory
       ansible.builtin.shell: pct set 115 -mp2 /mnt/truenas/music,mp=/mnt/music
+
+    - name: Create mount point for backup directory
+      ansible.builtin.shell: pct set 115 -mp3 /mnt/truenas/backups,mp=/mnt/backups
 
 # Installs Navidrome and sets up the configuration.
 - name: Setup Navidrome

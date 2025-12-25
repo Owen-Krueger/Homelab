@@ -1,3 +1,8 @@
+## Galaxy Roles Needed
+| Role | Website | URL |
+| --- | --- | --- |
+| roles-ansible.restic | https://github.com/roles-ansible/ansible_role_restic | ansible-galaxy install roles-ansible.restic |
+
 ## Packages Needed
 - passlib (python3-passlib)
 
@@ -12,3 +17,4 @@
 | 115 | Navidrome      | 192.168.100.156 |
 | 116 | Authentik      | 192.168.100.157 |
 | 117 | Snipe-IT       | 192.168.100.158 |
+| 118 | Nextcloud      | 192.168.100.159 |
