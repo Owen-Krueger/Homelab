@@ -42,6 +42,13 @@
 - name: Setup Caddy
   hosts: caddy
   gather_facts: no
+
+  vars_files:
+    - secrets.yaml
+
+  vars:
+    # Get version from https://go.dev/dl/
+    go_version: '1.25.5'
   
   roles:
     - caddy_setup

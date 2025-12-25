@@ -1,0 +1,67 @@
+---
+# Creates a new LXC container for Navidrome.
+# - name: Deploy Navidrome LXC Container
+#   hosts: proxmox
+#   gather_facts: no
+#   collections:
+#     - community.proxmox
+
+#   vars_files:
+#     - secrets.yaml
+
+#   vars:
+#     container_id: 115
+#     container_name: "navidrome"
+#     cpus: 1
+#     memory: 1024
+#     disk: "data"
+#     ip_address: "192.168.100.156"
+
+#   roles:
+#     - create_lxc
+
+# Configures the container, adding a non-root user to use for SSH.
+- name: Configure Navidrome
+  hosts: navidrome
+  remote_user: root # root needs to be used initially to set up ansible user.
+  gather_facts: yes
+  become: yes
+  become_user: root
+
+  vars_files:
+    - secrets.yaml
+
+  vars:
+    config_user: owen
+    ansible_ssh_user: root
+
+  roles:
+    - configure_container
+
+# Mounts the music NFS share. Because this is an unprivileged lxc, this
+# must be done by creating a mount point, rather than letting the container
+# mount the share itself.
+- name: Mount NFS
+  hosts: proxmox
+  gather_facts: no
+
+  tasks:
+    - name: Create mount point for music directory
+      ansible.builtin.shell: pct set 115 -mp2 /mnt/truenas/music,mp=/mnt/music
+
+    - name: Create mount point for backup directory
+      ansible.builtin.shell: pct set 115 -mp3 /mnt/truenas/backups,mp=/mnt/backups
+
+# Installs Navidrome and sets up the configuration.
+- name: Setup Navidrome
+  hosts: navidrome
+  gather_facts: no
+
+  vars_files:
+    - secrets.yaml
+
+  vars:
+    navidrome_version: '0.59.0'
+  
+  roles:
+    - navidrome_setup

@@ -10,3 +10,6 @@ all:
     jellyfin:
       ansible_host: 192.168.200.169
       ansible_user: owen
+    navidrome:
+      ansible_host: 192.168.100.156
+      ansible_user: owen

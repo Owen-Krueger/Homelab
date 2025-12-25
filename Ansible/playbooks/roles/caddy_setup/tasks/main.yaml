@@ -1,20 +1,113 @@
 ---
-- name: Download and install Caddy
-  ansible.builtin.get_url:
-    url: https://github.com/caddyserver/caddy/releases/latest/download/caddy_linux_amd64
-    dest: /usr/local/bin/caddy
-    mode: '0755'
-    owner: root
-    group: root
+# Following steps provided here: https://caddyserver.com/docs/install#static-binaries
+
+- name: Install Dependent Packages
+  ansible.builtin.apt:
+    name:
+    - debian-keyring
+    - debian-archive-keyring
+    - apt-transport-https
+    - curl
+    - golang-go
   become: yes
 
-- name: Create Caddy user
-  ansible.builtin.user:
-    name: caddy
-    system: yes
-    shell: /usr/sbin/nologin
-    group: caddy
-    createhome: no
+# Configure CrowdSec
+- name: Install CrowdSec Repository
+  ansible.builtin.shell: curl -s https://install.crowdsec.net | sudo sh
+
+- name: Install CrowdSec and Bouncer
+  ansible.builtin.apt:
+    name:
+      - crowdsec
+      - crowdsec-firewall-bouncer-iptables
+  become: yes
+
+- name: Read Bouncer Config
+  ansible.builtin.shell: cat /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
+  register: bouncer_content
+  become: yes
+
+- name: Set CrowdSec API Key
+  set_fact:
+    crowdsec_api_key: "{{ (bouncer_content.stdout | from_yaml).api_key }}"
+
+# # Configure Caddy and xcaddy
+- name: Ensure Dependency is Absent (caddy-stable-archive-keyrings.gpg)
+  ansible.builtin.file:
+    path: /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+    state: absent
+  become: yes
+
+- name: Download Dependencies (caddy-stable-archive-keyrings.gpg)
+  ansible.builtin.shell: curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+
+- name: Configure Permissions (caddy-stable-archive-keyrings.gpg)
+  ansible.builtin.file:
+    path: /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+    mode: '004'
+  become: yes
+
+- name: Ensure Dependency is Absent (caddy-stable.list)
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/caddy-stable.list
+    state: absent
+  become: yes
+  
+- name: Download Dependencies (caddy-stable.list)
+  ansible.builtin.shell: curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+
+- name: Configure Permissions (caddy-stable.list)
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/caddy-stable.list
+    mode: '004'
+  become: yes
+
+- name: Ensure Dependency is Absent (caddy-xcaddy-archive-keyrings.gpg)
+  ansible.builtin.file:
+    path: /usr/share/keyrings/caddy-xcaddy-archive-keyring.gpg
+    state: absent
+  become: yes
+    
+- name: Download Dependencies (caddy-xcaddy-archive-keyrings.gpg)
+  ansible.builtin.shell: curl -1sLf 'https://dl.cloudsmith.io/public/caddy/xcaddy/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-xcaddy-archive-keyring.gpg
+
+- name: Ensure Dependency is Absent (caddy-xcaddy.list)
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/caddy-xcaddy.list
+    state: absent
+  become: yes
+
+- name: Download Dependencies (caddy-xcaddy.list)
+  ansible.builtin.shell: curl -1sLf 'https://dl.cloudsmith.io/public/caddy/xcaddy/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-xcaddy.list
+
+- name: apt update
+  ansible.builtin.apt:
+    update_cache: yes
+  become: yes
+
+- name: Install Caddy and xcaddy
+  ansible.builtin.apt:
+    name: 
+      - caddy
+      - xcaddy
+  become: yes
+
+# For some reason, letting the toolchain be set to "AUTO" causes xcaddy
+# to fail. The fix for this is to manually set the toolchain version
+# prior to running the build.
+# - name: Switch GO Toolchain to {{ go_version }}
+#  ansible.builtin.shell: go env -w GOTOOLCHAIN=go{{ go_version }}
+
+- name: Install GO Toolchain
+  ansible.builtin.shell: go install golang.org/dl/go{{ go_version }}@latest
+
+- name: Build Caddy Modules
+  ansible.builtin.shell: xcaddy build \
+    --with github.com/caddy-dns/cloudflare
+    --with github.com/hslatman/caddy-crowdsec-bouncer/http \
+    --with github.com/hslatman/caddy-crowdsec-bouncer/layer4 \
+    --with github.com/hslatman/caddy-crowdsec-bouncer/appsec \
+    --output /usr/bin/caddy
   become: yes
 
 - name: Create Caddy config directory
@@ -34,7 +127,6 @@
     group: caddy
     mode: '0644'
   become: yes
-  notify: Reload Caddy
 
 - name: Template systemd service
   ansible.builtin.template:
