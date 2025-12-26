@@ -1,0 +1,97 @@
+---
+- name: apt update and upgrade
+  ansible.builtin.apt:
+    update_cache: yes
+    upgrade: yes
+  become: yes
+
+- name: Install dependent packages
+  ansible.builtin.apt:
+    name:
+      - apache2
+      - mariadb-server
+      - libapache2-mod-php
+      - php-gd
+      - php-mysql
+      - php-curl
+      - php-mbstring
+      - php-intl
+      - php-gmp
+      - php-xml
+      - php-imagick
+      - php-zip
+      - python3-mysqldb
+  become: yes
+  
+# Database
+- name: Create MariaDB database
+  community.mysql.mysql_db:
+    name: nextcloud
+    state: present
+    encoding: utf8mb4
+    collation: utf8mb4_general_ci
+  become: yes
+
+- name: Create MariaDB user
+  community.mysql.mysql_user:
+    name: "{{ nextcloud_database_username }}"
+    password: "{{ nextcloud_database_password }}"
+    priv: "nextcloud.*:ALL"
+    host: localhost
+    state: present
+  become: yes
+
+# Download Nextcloud
+- name: Download Nextcloud
+  ansible.builtin.get_url:
+    url: https://download.nextcloud.com/server/releases/latest.zip
+    dest: /tmp
+  become: yes
+
+- name: Unzip Nextcloud
+  ansible.builtin.unarchive:
+    src: /tmp/latest.zip
+    dest: /tmp
+  become: yes
+
+- name: Copy Nextcloud
+  ansible.builtin.copy:
+    src: /tmp/nextcloud
+    dest: /var/www
+  become: yes
+
+- name: Set folder permissions
+  ansible.builtin.file:
+    path: /var/www/nextcloud
+    owner: www-data
+    group: www-data
+    recurse: yes
+
+# Apache
+- name: Template nextcloud.conf
+  ansible.builtin.template:
+    src: nextcloud.conf.j2
+    dest: /etc/apache2/sites-available/nextcloud.conf
+  become: yes
+
+- name: Enable configurations
+  ansible.builtin.shell: |
+    a2ensite nextcloud.conf
+    a2enmod headers
+    a2enmod env
+    a2enmod dir
+    a2enmod mime
+    service apache2 restart
+  become: yes
+
+# Install Nextcloud
+- name: Install Nextcloud
+  ansible.builtin.command: >
+    php occ  maintenance:install \
+    --database 'mysql' --database-name 'nextcloud' \
+    --database-user '{{ nextcloud_database_username }}' --database-pass '{{ nextcloud_database_password }}' \
+    --admin-user 'admin' --admin-pass '{{ nextcloud_admin_password }}'
+  args:
+    chdir: /var/www/nextcloud
+  become: yes
+  become_user: www-data
