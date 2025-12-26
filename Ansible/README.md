@@ -1,6 +1,7 @@
 ## Galaxy Roles Needed
 | Role | Website | URL |
 | --- | --- | --- |
+| community.general | | ansible-galaxy collection install community.general |
 | roles-ansible.restic | https://github.com/roles-ansible/ansible_role_restic | ansible-galaxy install roles-ansible.restic |
 
 ## Packages Needed

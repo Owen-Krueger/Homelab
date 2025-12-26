@@ -21,6 +21,7 @@
       - php-imagick
       - php-zip
       - python3-mysqldb
+      - unzip
   become: yes
   
 # Database
@@ -52,12 +53,14 @@
   ansible.builtin.unarchive:
     src: /tmp/latest.zip
     dest: /tmp
+    remote_src: yes
   become: yes
 
 - name: Copy Nextcloud
   ansible.builtin.copy:
     src: /tmp/nextcloud
     dest: /var/www
+    remote_src: yes
   become: yes
 
 - name: Set folder permissions
@@ -65,7 +68,9 @@
     path: /var/www/nextcloud
     owner: www-data
     group: www-data
+    mode: '0755'
     recurse: yes
+  become: yes
 
 # Apache
 - name: Template nextcloud.conf
@@ -93,5 +98,5 @@
     --admin-user 'admin' --admin-pass '{{ nextcloud_admin_password }}'
   args:
     chdir: /var/www/nextcloud
-  become: yes
   become_user: www-data
+  become_flags: '-E'
