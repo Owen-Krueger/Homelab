@@ -21,9 +21,10 @@
     state: present
     timeout: 300
   register: lxc_result
-  become: yes
+  become: true
 
 # Output results
 - name: Debug container creation result
   ansible.builtin.debug:
     msg: "{{ lxc_result }}"
+

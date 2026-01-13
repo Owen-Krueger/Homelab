@@ -5,8 +5,8 @@
 - name: Configure Nextcloud
   hosts: nextcloud
   remote_user: root # root needs to be used initially to set up ansible user.
-  gather_facts: yes
-  become: yes
+  gather_facts: true
+  become: true
   become_user: root
 
   vars_files:
@@ -22,10 +22,11 @@
 # Installs Nextcloud and sets up configurations
 - name: Setup Nextcloud
   hosts: nextcloud
-  gather_facts: no
+  gather_facts: false
 
   vars_files:
     - secrets.yaml
-  
+
   roles:
     - nextcloud_setup
+

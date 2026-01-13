@@ -92,7 +92,7 @@
 # Install Nextcloud
 - name: Install Nextcloud
   ansible.builtin.command: >
-    php occ  maintenance:install \
+    php occ maintenance:install \
     --database 'mysql' --database-name 'nextcloud' \
     --database-user '{{ nextcloud_database_username }}' --database-pass '{{ nextcloud_database_password }}' \
     --admin-user 'admin' --admin-pass '{{ nextcloud_admin_password }}'

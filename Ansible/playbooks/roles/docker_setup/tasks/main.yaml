@@ -1,0 +1,49 @@
+---
+- name: Apt Update and Upgrade
+  ansible.builtin.apt:
+    update_cache: yes
+  become: true
+
+- name: Install Packages
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+  become: true
+
+- name: Add Docker GPG Key
+  ansible.builtin.shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+  become: true
+
+- name: Add Docker Repository to Apt Source
+  ansible.builtin.shell: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+  become: true
+
+- name: Update Apt Cache Policy
+  ansible.builtin.shell: apt-cache policy docker-ce
+
+- name: Install Docker
+  ansible.builtin.apt:
+    name:
+      - docker-ce
+  become: true
+
+- name: Add User to Docker Group
+  ansible.builtin.shell: usermod -aG docker {{ config_user | default('owen') }}
+  become: true
+  when: config_user is defined
+
+- name: Download Docker Compose
+  ansible.builtin.shell: curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  become: true
+
+- name: Set Execute Permissions
+  ansible.builtin.shell: chmod +x /usr/local/bin/docker-compose
+  become: true
+
+- name: Create Docker Compose Folder
+  ansible.builtin.file:
+    path: "~/docker-compose"
+    state: directory
