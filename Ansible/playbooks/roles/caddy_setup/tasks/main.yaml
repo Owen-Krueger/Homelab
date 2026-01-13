@@ -99,10 +99,14 @@
 #  ansible.builtin.shell: go env -w GOTOOLCHAIN=go{{ go_version }}
 
 - name: Install GO Toolchain
-  ansible.builtin.shell: go install golang.org/dl/go{{ go_version }}@latest
+  ansible.builtin.shell: |
+    export PATH=$PATH:$HOME/go/bin
+    source ~/.bashrc
+    go install golang.org/dl/go{{ go_version }}@latest
+    go{{ go_version }} download
 
 - name: Build Caddy Modules
-  ansible.builtin.shell: xcaddy build \
+  ansible.builtin.shell: XCADDY_WHICH_GO=$HOME/go/bin/go{{ go_version }} xcaddy build \
     --with github.com/caddy-dns/cloudflare
     --with github.com/hslatman/caddy-crowdsec-bouncer/http \
     --with github.com/hslatman/caddy-crowdsec-bouncer/layer4 \

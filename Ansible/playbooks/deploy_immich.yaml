@@ -1,0 +1,11 @@
+# Configures the container, adding a non-root user to use for SSH.
+- name: Configure Navidrome
+  hosts: immich
+  gather_facts: true
+  become: true
+
+  vars_files:
+    - secrets.yaml
+
+  roles:
+    - configure_container

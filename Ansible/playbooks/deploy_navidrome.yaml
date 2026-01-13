@@ -24,8 +24,8 @@
 - name: Configure Navidrome
   hosts: navidrome
   remote_user: root # root needs to be used initially to set up ansible user.
-  gather_facts: yes
-  become: yes
+  gather_facts: true
+  become: true
   become_user: root
 
   vars_files:
@@ -43,7 +43,7 @@
 # mount the share itself.
 - name: Mount NFS
   hosts: proxmox
-  gather_facts: no
+  gather_facts: false
 
   tasks:
     - name: Create mount point for music directory
@@ -55,13 +55,14 @@
 # Installs Navidrome and sets up the configuration.
 - name: Setup Navidrome
   hosts: navidrome
-  gather_facts: no
+  gather_facts: false
 
   vars_files:
     - secrets.yaml
 
   vars:
-    navidrome_version: '0.59.0'
-  
+    navidrome_version: "0.59.0"
+
   roles:
     - navidrome_setup
+

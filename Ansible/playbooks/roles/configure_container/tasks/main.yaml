@@ -13,7 +13,7 @@
       - sudo
     state: present
     update_cache: yes
-  become: yes
+  become: true
 
 - name: Ensure non-root user exists (optional)
   ansible.builtin.user:
@@ -22,7 +22,7 @@
     shell: /bin/bash
     groups: sudo
     append: yes
-  become: yes
+  become: true
   when: config_user is defined
 
 - name: Add public key for non-root user (optional)
@@ -30,13 +30,14 @@
     user: "{{ config_user | default('owen') }}"
     state: present
     key: "{{ proxmox_public_key }}"
-  become: yes
+  become: true
   when: config_user is defined
 
 - name: Enable passwordless sudo for user (optional)
   ansible.builtin.lineinfile:
     path: /etc/sudoers
     line: "{{ config_user | default('owen') }} ALL=(ALL) NOPASSWD: ALL"
-    validate: 'visudo -cf %s'
-  become: yes
+    validate: "visudo -cf %s"
+  become: true
   when: config_user is defined
+

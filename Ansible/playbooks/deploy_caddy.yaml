@@ -24,8 +24,8 @@
 - name: Configure Caddy
   hosts: caddy
   remote_user: root # root needs to be used initially to set up ansible user.
-  gather_facts: yes
-  become: yes
+  gather_facts: true
+  become: true
   become_user: root
 
   vars_files:
@@ -41,14 +41,14 @@
 # Installs Caddy and sets up a Caddyfile.
 - name: Setup Caddy
   hosts: caddy
-  gather_facts: no
+  gather_facts: false
 
   vars_files:
     - secrets.yaml
 
   vars:
     # Get version from https://go.dev/dl/
-    go_version: '1.25.5'
-  
+    go_version: "1.25.5"
+
   roles:
     - caddy_setup
