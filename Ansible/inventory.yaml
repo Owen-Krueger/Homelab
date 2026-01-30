@@ -19,3 +19,6 @@ all:
     immich:
       ansible_host: 192.168.100.155
       ansible_user: owen
+    plex:
+      ansible_host: 192.168.200.154
+      ansible_user: owen

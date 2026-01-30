@@ -1,0 +1,10 @@
+---
+- name: Copy Caddy config
+  hosts: caddy
+  gather_facts: false
+
+  vars_files:
+    - secrets.yaml
+
+  roles:
+    - caddy_config

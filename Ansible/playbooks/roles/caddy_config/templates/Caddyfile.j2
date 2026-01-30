@@ -1,5 +1,9 @@
 # Global config
 {
+    log {
+        level DEBUG
+      }
+
     # Crowdsec
     crowdsec {
         api_url http://localhost:8080
@@ -15,6 +19,9 @@
 auth.owenkrueger.com {
     encode gzip
     crowdsec
+    log {
+      output file /var/log/caddy/access.log
+    }
 
     reverse_proxy {{caddy_authentik_ip}}
 
@@ -27,8 +34,16 @@ auth.owenkrueger.com {
 cloud.owenkrueger.com {
     encode gzip
     crowdsec
+    log {
+      output file /var/log/caddy/access.log
+    }
 
-    reverse_proxy {{caddy_nextcloud_ip}}
+    reverse_proxy {{caddy_nextcloud_ip}} {
+      transport http {
+              read_timeout 60s
+              write_timeout 60s
+          }
+      }
 
     tls {
         dns cloudflare {{ caddy_cloudflare_api_key }}
@@ -39,6 +54,9 @@ cloud.owenkrueger.com {
 docker.owenkrueger.com {
     encode gzip
     crowdsec
+    log {
+      output file /var/log/caddy/access.log
+    }
 
     reverse_proxy {{caddy_dockge_ip}}
 
@@ -51,6 +69,9 @@ docker.owenkrueger.com {
 documents.owenkrueger.com {
     encode gzip
     crowdsec
+    log {
+      output file /var/log/caddy/access.log
+    }
 
     reverse_proxy {{caddy_paperless_ip}}
 
@@ -63,6 +84,9 @@ documents.owenkrueger.com {
 esp.owenkrueger.com {
     encode gzip
     crowdsec
+    log {
+      output file /var/log/caddy/access.log
+    }
 
     reverse_proxy {{caddy_esp_ip}}
 
@@ -75,6 +99,9 @@ esp.owenkrueger.com {
 hassio.owenkrueger.com {
     encode gzip
     crowdsec
+    log {
+      output file /var/log/caddy/access.log
+    }
 
     reverse_proxy {{caddy_homeassistant_ip}}
 
@@ -87,6 +114,9 @@ hassio.owenkrueger.com {
 hoarder.owenkrueger.com {
     encode gzip
     crowdsec
+    log {
+      output file /var/log/caddy/access.log
+    }
 
     reverse_proxy {{caddy_karakeep_ip}}
 
@@ -99,6 +129,9 @@ hoarder.owenkrueger.com {
 inventory.owenkrueger.com {
     encode gzip
     crowdsec
+    log {
+      output file /var/log/caddy/access.log
+    }
 
     reverse_proxy {{caddy_snipeit_ip}}
 
@@ -111,6 +144,9 @@ inventory.owenkrueger.com {
 joplin.owenkrueger.com {
     encode gzip
     crowdsec
+    log {
+      output file /var/log/caddy/access.log
+    }
 
     reverse_proxy {{caddy_joplin_ip}}
     
@@ -123,6 +159,9 @@ joplin.owenkrueger.com {
 music.owenkrueger.com {
     encode gzip
     crowdsec
+    log {
+      output file /var/log/caddy/access.log
+    }
 
     reverse_proxy {{caddy_navidrome_ip}}
 
@@ -135,6 +174,9 @@ music.owenkrueger.com {
 nas.owenkrueger.com {
     encode gzip
     crowdsec
+    log {
+      output file /var/log/caddy/access.log
+    }
 
     reverse_proxy {{caddy_truenas_ip}}
 
@@ -147,6 +189,9 @@ nas.owenkrueger.com {
 photos.owenkrueger.com {
     encode gzip
     crowdsec
+    log {
+      output file /var/log/caddy/access.log
+    }
 
     reverse_proxy {{caddy_immich_ip}}
 
@@ -159,6 +204,9 @@ photos.owenkrueger.com {
 plex.owenkrueger.com {
     encode gzip
     crowdsec
+    log {
+      output file /var/log/caddy/access.log
+    }
 
     reverse_proxy {{caddy_plex_ip}}
 
@@ -171,6 +219,9 @@ plex.owenkrueger.com {
 proxmox.owenkrueger.com {
     encode gzip
     crowdsec
+    log {
+      output file /var/log/caddy/access.log
+    }
 
     reverse_proxy {{caddy_proxmox_ip}}
 
@@ -183,6 +234,9 @@ proxmox.owenkrueger.com {
 tools.owenkrueger.com {
     encode gzip
     crowdsec
+    log {
+      output file /var/log/caddy/access.log
+    }
 
     reverse_proxy {{caddy_ittools_ip}}
 
@@ -195,6 +249,9 @@ tools.owenkrueger.com {
 videos.owenkrueger.com {
     encode gzip
     crowdsec
+    log {
+      output file /var/log/caddy/access.log
+    }
 
     reverse_proxy {{caddy_jellyfin_ip}}
 

@@ -3,7 +3,7 @@
   ansible.builtin.apt:
     update_cache: yes
     upgrade: yes
-  become: yes
+  become: true
 
 - name: Install dependent packages
   ansible.builtin.apt:
@@ -22,8 +22,8 @@
       - php-zip
       - python3-mysqldb
       - unzip
-  become: yes
-  
+  become: true
+
 # Database
 - name: Create MariaDB database
   community.mysql.mysql_db:
@@ -31,7 +31,7 @@
     state: present
     encoding: utf8mb4
     collation: utf8mb4_general_ci
-  become: yes
+  become: true
 
 - name: Create MariaDB user
   community.mysql.mysql_user:
@@ -40,44 +40,44 @@
     priv: "nextcloud.*:ALL"
     host: localhost
     state: present
-  become: yes
+  become: true
 
 # Download Nextcloud
 - name: Download Nextcloud
   ansible.builtin.get_url:
     url: https://download.nextcloud.com/server/releases/latest.zip
     dest: /tmp
-  become: yes
+  become: true
 
 - name: Unzip Nextcloud
   ansible.builtin.unarchive:
     src: /tmp/latest.zip
     dest: /tmp
     remote_src: yes
-  become: yes
+  become: true
 
 - name: Copy Nextcloud
   ansible.builtin.copy:
     src: /tmp/nextcloud
     dest: /var/www
     remote_src: yes
-  become: yes
+  become: true
 
 - name: Set folder permissions
   ansible.builtin.file:
     path: /var/www/nextcloud
     owner: www-data
     group: www-data
-    mode: '0755'
+    mode: "0755"
     recurse: yes
-  become: yes
+  become: true
 
 # Apache
 - name: Template nextcloud.conf
   ansible.builtin.template:
     src: nextcloud.conf.j2
     dest: /etc/apache2/sites-available/nextcloud.conf
-  become: yes
+  become: true
 
 - name: Enable configurations
   ansible.builtin.shell: |
@@ -87,7 +87,7 @@
     a2enmod dir
     a2enmod mime
     service apache2 restart
-  become: yes
+  become: true
 
 # Install Nextcloud
 - name: Install Nextcloud
@@ -99,4 +99,5 @@
   args:
     chdir: /var/www/nextcloud
   become_user: www-data
-  become_flags: '-E'
+  become_flags: "-E"
+
