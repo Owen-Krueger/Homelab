@@ -1,0 +1,6 @@
+name: me/mydomain
+description: "My homelab domain"
+whitelist:
+  reason: "do whitelistings by FQDN"
+  expression:
+    - evt.Overflow.Alert.Source.IP in LookupHost("photos.owenkrueger.com")

@@ -1,0 +1,101 @@
+---
+# Following steps provided here: https://element-hq.github.io/synapse/latest/setup/installation.html#debianubuntu
+# Need to install python3-psycopg2 package.
+
+# Synapse Server
+- name: Install Dependent Packages
+  ansible.builtin.apt:
+    name:
+      - lsb-release
+      - wget
+      - apt-transport-https
+      - python3-psycopg2 # Needed for Postgres
+  become: true
+
+- name: wget keyring
+  ansible.builtin.shell: wget -O /usr/share/keyrings/matrix-org-archive-keyring.gpg https://packages.matrix.org/debian/matrix-org-archive-keyring.gpg
+  become: true
+
+- name: Add keyring as source
+  ansible.builtin.shell: |
+    echo "deb [signed-by=/usr/share/keyrings/matrix-org-archive-keyring.gpg] https://packages.matrix.org/debian/ $(lsb_release -cs) main" |
+    tee /etc/apt/sources.list.d/matrix-org.list
+  become: true
+
+- name: apt update
+  ansible.builtin.apt:
+    update_cache: yes
+  become: true
+
+- name: Install Synapse server
+  ansible.builtin.apt:
+    name:
+      - matrix-synapse-py3
+  become: true
+
+# Postgres Setup
+- name: Install Postgres
+  ansible.builtin.apt:
+    name:
+      - postgresql
+      - postgresql-client-common 
+  become: true
+
+- name: Ensure PostgreSQL service is running and enabled
+  ansible.builtin.systemd:
+    name: postgresql
+    state: started
+    enabled: true
+  become: true
+
+- name: Create synapse_user user
+  community.postgresql.postgresql_user:
+    name: synapse_user
+    password: "{{matrix_synapse_user_password}}"
+    state: present
+  become: true
+  become_user: postgres
+
+- name: Create synapse database
+  community.postgresql.postgresql_db:
+    name: synapse
+    owner: synapse_user
+    encoding: UTF8
+    lc_collate: C
+    lc_ctype: C
+    template: template0
+    login_user: postgres
+  become: true
+  become_user: postgres
+
+- name: Template homeserver.yaml
+  ansible.builtin.template:
+    src: homeserver.j2
+    dest: /etc/matrix-synapse/homeserver.yaml
+  become: true
+
+- name: Template database.yaml
+  ansible.builtin.template:
+    src: database.j2
+    dest: /etc/matrix-synapse/conf.d/database.yaml
+  become: true
+
+- name: Template server_name.yaml
+  ansible.builtin.template:
+    src: server_name.j2
+    dest: /etc/matrix-synapse/conf.d/server_name.yaml
+  become: true
+
+- name: Reload Synapse service
+  ansible.builtin.systemd:
+    name: matrix-synapse
+    state: restarted
+  become: true
+
+# TURN Server Setup (for voice)
+#- name: Install coturn
+#  ansible.builtin.apt:
+#    name:
+#      - coturn
+#  become: true
+

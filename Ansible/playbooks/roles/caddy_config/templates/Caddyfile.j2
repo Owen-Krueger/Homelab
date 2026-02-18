@@ -1,10 +1,4 @@
-# Global config
 {
-    log {
-        level DEBUG
-      }
-
-    # Crowdsec
     crowdsec {
         api_url http://localhost:8080
         api_key {{ crowdsec_api_key }}
@@ -12,250 +6,158 @@
         # appsec_url http://localhost:7422
     }
 
+    log {
+        output file /var/log/caddy/access.log {
+            roll_size 30MiB
+            roll_keep 5
+        }
+
+        format console
+    }
+
+
     order crowdsec before reverse_proxy
 }
 
-# Authentik
-auth.owenkrueger.com {
-    encode gzip
-    crowdsec
-    log {
-      output file /var/log/caddy/access.log
-    }
-
-    reverse_proxy {{caddy_authentik_ip}}
+*.owenkrueger.com {
+    # crowdsec
+    log
 
     tls {
         dns cloudflare {{ caddy_cloudflare_api_key }}
+        propagation_delay 2m
+        resolvers 1.1.1.1
+    }
+
+    @authentik host auth.owenkrueger.com
+    handle @authentik {
+        reverse_proxy {{caddy_authentik_ip}}
+    }
+
+    @nextcloud host cloud.owenkrueger.com
+    handle @nextcloud {
+        reverse_proxy {{caddy_nextcloud_ip}}
+    }
+
+    @dockge host docker.owenkrueger.com 
+    handle @dockge {
+        reverse_proxy {{caddy_dockge_ip}}
+    }
+
+    @paperlessngx host documents.owenkrueger.com 
+    handle @paperlessngx {
+        reverse_proxy {{caddy_paperless_ip}}
+    }
+
+    @esphome host esp.owenkrueger.com
+    handle @esphome {
+        reverse_proxy {{caddy_esp_ip}}
+    }
+
+    @homeassistant host hassio.owenkrueger.com
+    handle @homeassistant {
+        reverse_proxy {{caddy_homeassistant_ip}}
+    }
+
+    @karakeep host hoarder.owenkrueger.com
+    handle @karakeep {
+        reverse_proxy {{caddy_karakeep_ip}}
+    }
+
+    @snipeit host inventory.owenkrueger.com 
+    handle @snipeit {
+        reverse_proxy {{caddy_snipeit_ip}}
+    }
+
+    @joplin host joplin.owenkrueger.com
+    handle @joplin {
+        reverse_proxy {{caddy_joplin_ip}}
+    }
+
+    @navidrome host music.owenkrueger.com
+    handle @navidrome {
+        reverse_proxy {{caddy_navidrome_ip}}
+    }
+
+    @truenas host nas.owenkrueger.com
+    handle @truenas {
+        reverse_proxy {{caddy_truenas_ip}}
+    }
+
+    @immich host photos.owenkrueger.com
+    handle @immich {
+        reverse_proxy {{caddy_immich_ip}}
+    }
+
+    @plex host plex.owenkrueger.com
+    handle @plex {
+        encode gzip
+        reverse_proxy {{caddy_plex_ip}}
+    }
+
+    @proxmox host proxmox.owenkrueger.com
+    handle @proxmox {
+        reverse_proxy {{caddy_proxmox_ip}}
+    }
+
+    @ittools host tools.owenkrueger.com
+    handle @ittools {
+        reverse_proxy {{caddy_ittools_ip}}
+    }
+
+    @jellyfin host videos.owenkrueger.com
+    handle @jellyfin {
+        reverse_proxy {{caddy_jellyfin_ip}}
+    }
+
+    # Fallback for otherwise unhandled domains
+    handle {
+        abort
     }
 }
 
-# Nextcloud
-cloud.owenkrueger.com {
-    encode gzip
-    crowdsec
-    log {
-      output file /var/log/caddy/access.log
-    }
+# eloe.xyz {
+#     tls {
+#         dns cloudflare {{ caddy_cloudflare_api_key }}
+#         propagation_delay 2m
+#         resolvers 1.1.1.1
+#     }
 
-    reverse_proxy {{caddy_nextcloud_ip}} {
-      transport http {
-              read_timeout 60s
-              write_timeout 60s
-          }
-      }
+#     reverse_proxy /_matrix/* {{caddy_matrix_ip}}
+#     reverse_proxy /_synapse/client/* {{caddy_matrix_ip}}
 
-    tls {
+#     respond /.well-known/matrix/server `{"m.server": "eloe.xyz:443"}` 200
+#     respond /.well-known/matrix/client `{"m.homeserver": {"base_url": "https://eloe.xyz"}}` 200
+# }
+
+# eloe.xyz:8448 {
+#    tls {
+#        dns cloudflare {{ caddy_cloudflare_api_key }}
+#        propagation_delay 2m
+#        resolvers 1.1.1.1
+#    }
+
+#    reverse_proxy /_matrix/* {{caddy_matrix_ip}}
+#    reverse_proxy /_synapse/client/* {{caddy_matrix_ip}}
+#}
+
+matrix.eloe.xyz {
+  tls {
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
+        propagation_delay 2m
+        resolvers 1.1.1.1
+  }
+
+  reverse_proxy /_matrix/* {{caddy_matrix_ip}}
+  reverse_proxy /_synapse/client/* {{caddy_matrix_ip}}
 }
 
-# Dockge
-docker.owenkrueger.com {
-    encode gzip
-    crowdsec
-    log {
-      output file /var/log/caddy/access.log
-    }
-
-    reverse_proxy {{caddy_dockge_ip}}
-
-    tls {
+eloe.xyz:8448 {
+  tls {
         dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-}
+        propagation_delay 2m
+        resolvers 1.1.1.1
+  }
 
-# Paperless-ngx
-documents.owenkrueger.com {
-    encode gzip
-    crowdsec
-    log {
-      output file /var/log/caddy/access.log
-    }
-
-    reverse_proxy {{caddy_paperless_ip}}
-
-    tls {
-        dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-}
-
-# ESPHome
-esp.owenkrueger.com {
-    encode gzip
-    crowdsec
-    log {
-      output file /var/log/caddy/access.log
-    }
-
-    reverse_proxy {{caddy_esp_ip}}
-
-    tls {
-        dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-}
-
-# Home Assistant
-hassio.owenkrueger.com {
-    encode gzip
-    crowdsec
-    log {
-      output file /var/log/caddy/access.log
-    }
-
-    reverse_proxy {{caddy_homeassistant_ip}}
-
-    tls {
-        dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-}
-
-# Karakeep
-hoarder.owenkrueger.com {
-    encode gzip
-    crowdsec
-    log {
-      output file /var/log/caddy/access.log
-    }
-
-    reverse_proxy {{caddy_karakeep_ip}}
-
-    tls {
-        dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-}
-
-# Snipe-IT
-inventory.owenkrueger.com {
-    encode gzip
-    crowdsec
-    log {
-      output file /var/log/caddy/access.log
-    }
-
-    reverse_proxy {{caddy_snipeit_ip}}
-
-    tls {
-        dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-}
-
-# Joplin
-joplin.owenkrueger.com {
-    encode gzip
-    crowdsec
-    log {
-      output file /var/log/caddy/access.log
-    }
-
-    reverse_proxy {{caddy_joplin_ip}}
-    
-    tls {
-        dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-}
-
-# Navidrome
-music.owenkrueger.com {
-    encode gzip
-    crowdsec
-    log {
-      output file /var/log/caddy/access.log
-    }
-
-    reverse_proxy {{caddy_navidrome_ip}}
-
-    tls {
-        dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-}
-
-# Truenas
-nas.owenkrueger.com {
-    encode gzip
-    crowdsec
-    log {
-      output file /var/log/caddy/access.log
-    }
-
-    reverse_proxy {{caddy_truenas_ip}}
-
-    tls {
-        dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-}
-
-# Immich
-photos.owenkrueger.com {
-    encode gzip
-    crowdsec
-    log {
-      output file /var/log/caddy/access.log
-    }
-
-    reverse_proxy {{caddy_immich_ip}}
-
-    tls {
-        dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-}
-
-# Plex
-plex.owenkrueger.com {
-    encode gzip
-    crowdsec
-    log {
-      output file /var/log/caddy/access.log
-    }
-
-    reverse_proxy {{caddy_plex_ip}}
-
-    tls {
-        dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-}
-
-# Proxmox
-proxmox.owenkrueger.com {
-    encode gzip
-    crowdsec
-    log {
-      output file /var/log/caddy/access.log
-    }
-
-    reverse_proxy {{caddy_proxmox_ip}}
-
-    tls {
-        dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-}
-
-# IT Tools
-tools.owenkrueger.com {
-    encode gzip
-    crowdsec
-    log {
-      output file /var/log/caddy/access.log
-    }
-
-    reverse_proxy {{caddy_ittools_ip}}
-
-    tls {
-        dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
-}
-
-# Jellyfin
-videos.owenkrueger.com {
-    encode gzip
-    crowdsec
-    log {
-      output file /var/log/caddy/access.log
-    }
-
-    reverse_proxy {{caddy_jellyfin_ip}}
-
-    tls {
-        dns cloudflare {{ caddy_cloudflare_api_key }}
-    }
+  reverse_proxy /_matrix/* {{caddy_matrix_ip}}
 }

@@ -22,6 +22,29 @@
       - crowdsec-firewall-bouncer-iptables
   become: true
 
+- name: Install caddy log parser for CrowdSec 
+  ansible.builtin.shell: cscli collections install crowdsecurity/caddy
+  become: true
+
+- name: Template /etc/crowdsec/acquis.d/caddy.yaml
+  ansible.builtin.template:
+    src: caddy.j2
+    dest: /etc/crowdsec/acquis.d/caddy.yaml
+  become: true
+
+- name: Template /etc/crowdsec/postoverflows/fqdn_whitelist.yaml
+  ansible.builtin.template:
+    src: fqdn_whitelist.j2
+    dest: /etc/crowdsec/postoverflows/fqdn_whitelist.yaml
+  become: true
+
+- name: Reload Crowdsec
+  ansible.builtin.systemd:
+    name: crowdsec
+    enabled: yes
+    state: reloaded
+  become: true
+
 # # Configure Caddy and xcaddy
 - name: Ensure Dependency is Absent (caddy-stable-archive-keyrings.gpg)
   ansible.builtin.file:

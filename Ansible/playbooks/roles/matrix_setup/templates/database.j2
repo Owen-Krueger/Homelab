@@ -1,0 +1,9 @@
+database:
+  name: psycopg2
+  args:
+    user: synapse_user
+    password: {{matrix_synapse_user_password}}
+    dbname: synapse
+    host: localhost
+    cp_min: 5
+    cp_max: 10
