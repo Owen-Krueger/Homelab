@@ -141,23 +141,25 @@
 #    reverse_proxy /_synapse/client/* {{caddy_matrix_ip}}
 #}
 
-matrix.eloe.xyz {
-  tls {
+eloe.xyz {
+    tls {
         dns cloudflare {{ caddy_cloudflare_api_key }}
         propagation_delay 2m
         resolvers 1.1.1.1
-  }
+    }
 
-  reverse_proxy /_matrix/* {{caddy_matrix_ip}}
-  reverse_proxy /_synapse/client/* {{caddy_matrix_ip}}
-}
+    # Handle Matrix federation discovery
+    handle /.well-known/matrix/server {
+        respond `{"m.server": "eloe.xyz:443"}` 200
+        header Content-Type application/json
+    }
 
-eloe.xyz:8448 {
-  tls {
-        dns cloudflare {{ caddy_cloudflare_api_key }}
-        propagation_delay 2m
-        resolvers 1.1.1.1
-  }
+    # Handle Matrix client discovery
+    handle /.well-known/matrix/client {
+        respond `{"m.homeserver": {"base_url": "https://eloe.xyz"}}` 200
+        header Content-Type application/json
+    }
 
-  reverse_proxy /_matrix/* {{caddy_matrix_ip}}
+    # Reverse proxy to Synapse
+    reverse_proxy {{caddy_matrix_ip}}
 }
