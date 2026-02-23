@@ -1,49 +1,37 @@
 ---
-- name: Apt Update and Upgrade
+- name: apt update
   ansible.builtin.apt:
     update_cache: yes
   become: true
 
-- name: Install Packages
+- name: Install packages
   ansible.builtin.apt:
     name:
-      - apt-transport-https
-      - ca-certificates
-      - curl
-      - software-properties-common
+    - ca-certificates
+    - curl
   become: true
 
-- name: Add Docker GPG Key
-  ansible.builtin.shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+- name: Install keyrings
+  ansible.builtin.shell: install -m 0755 -d /etc/apt/keyrings
   become: true
 
-- name: Add Docker Repository to Apt Source
-  ansible.builtin.shell: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+- name: Download Docker keyring
+  ansible.builtin.shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
   become: true
 
-- name: Update Apt Cache Policy
-  ansible.builtin.shell: apt-cache policy docker-ce
+- name: Chmod keyring
+  ansible.builtin.shell: chmod a+r /etc/apt/keyrings/docker.asc
+  become: true
 
-- name: Install Docker
+- name: Add repo to apt source
+  ansible.builtin.shell: tee /etc/apt/sources.list.d/docker.sources <<EOF
+  become: true
+
+- name: Install Docker engine
   ansible.builtin.apt:
     name:
       - docker-ce
-  become: true
-
-- name: Add User to Docker Group
-  ansible.builtin.shell: usermod -aG docker {{ config_user | default('owen') }}
-  become: true
-  when: config_user is defined
-
-- name: Download Docker Compose
-  ansible.builtin.shell: curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-  become: true
-
-- name: Set Execute Permissions
-  ansible.builtin.shell: chmod +x /usr/local/bin/docker-compose
-  become: true
-
-- name: Create Docker Compose Folder
-  ansible.builtin.file:
-    path: "~/docker-compose"
-    state: directory
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
