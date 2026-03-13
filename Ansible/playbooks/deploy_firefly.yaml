@@ -1,6 +1,6 @@
 # Configures the container, adding a non-root user to use for SSH.
-- name: Configure Immich
-  hosts: immich
+- name: Configure Firefly
+  hosts: firefly
   gather_facts: true
   become: true
 
@@ -11,7 +11,7 @@
     - configure_container
 
 - name: Setup Docker
-  hosts: immich
+  hosts: firefly
   gather_facts: true
   become: true
 

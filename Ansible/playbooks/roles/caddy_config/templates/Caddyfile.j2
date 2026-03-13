@@ -33,6 +33,12 @@
     handle @authentik {
         reverse_proxy {{caddy_authentik_ip}}
     }
+    
+    @firefly host budget.owenkrueger.com
+    handle @firefly {
+
+        reverse_proxy {{caddy_firefly_ip}}
+    }
 
     @nextcloud host cloud.owenkrueger.com
     handle @nextcloud {
@@ -115,31 +121,6 @@
         abort
     }
 }
-
-# eloe.xyz {
-#     tls {
-#         dns cloudflare {{ caddy_cloudflare_api_key }}
-#         propagation_delay 2m
-#         resolvers 1.1.1.1
-#     }
-
-#     reverse_proxy /_matrix/* {{caddy_matrix_ip}}
-#     reverse_proxy /_synapse/client/* {{caddy_matrix_ip}}
-
-#     respond /.well-known/matrix/server `{"m.server": "eloe.xyz:443"}` 200
-#     respond /.well-known/matrix/client `{"m.homeserver": {"base_url": "https://eloe.xyz"}}` 200
-# }
-
-# eloe.xyz:8448 {
-#    tls {
-#        dns cloudflare {{ caddy_cloudflare_api_key }}
-#        propagation_delay 2m
-#        resolvers 1.1.1.1
-#    }
-
-#    reverse_proxy /_matrix/* {{caddy_matrix_ip}}
-#    reverse_proxy /_synapse/client/* {{caddy_matrix_ip}}
-#}
 
 eloe.xyz {
     tls {

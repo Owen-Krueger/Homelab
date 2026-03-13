@@ -1,0 +1,27 @@
+---
+# Following steps provided here: https://www.navidrome.org/docs/installation/linux/#install-navidrome-using-pre-built-binary
+
+- name: Apt Update and Upgrade
+  ansible.builtin.apt:
+    update_cache: yes
+    upgrade: yes
+  become: yes
+
+- name: Install Navidrome
+  ansible.builtin.apt:
+    deb: https://github.com/navidrome/navidrome/releases/download/v{{ navidrome_version }}/navidrome_{{ navidrome_version }}_linux_amd64.deb
+  become: yes
+
+- name: Template navidrome.toml
+  ansible.builtin.template:
+    src: navidrome.j2
+    dest: /etc/navidrome/navidrome.toml
+  become: yes
+
+- name: Start systemd
+  ansible.builtin.systemd_service:
+    name: navidrome
+    state: started
+    daemon_reload: true
+  become: yes
+
