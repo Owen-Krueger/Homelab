@@ -3,6 +3,9 @@ all:
     proxmox:
       ansible_host: 192.168.200.155
       ansible_user: root
+    authentik:
+      ansible_host: 192.168.100.153
+      ansible_user: owen
     caddy:
       ansible_host: 192.168.100.151
       ansible_user: owen
@@ -21,6 +24,9 @@ all:
       ansible_user: owen
     immich:
       ansible_host: 192.168.100.155
+      ansible_user: owen
+    it-tools:
+      ansible_host: 192.168.100.163
       ansible_user: owen
     plex:
       ansible_host: 192.168.200.154

@@ -1,0 +1,10 @@
+---
+- name: Setup docker
+  hosts: authentik
+  gather_facts: false
+
+  vars_files:
+    - secrets.yaml
+
+  roles:
+    - docker_setup

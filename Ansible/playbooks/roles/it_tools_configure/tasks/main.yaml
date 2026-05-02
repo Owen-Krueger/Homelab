@@ -1,0 +1,17 @@
+---
+- name: Copy container file
+  ansible.builtin.copy:
+    src: files/it_tools.container
+    dest: ~/.config/containers/systemd/it_tools.container
+
+- name: Restart daemon
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+    scope: user
+
+- name: Start service
+  ansible.builtin.systemd_service:
+    name: it_tools.service
+    state: started
+    enabled: true
+    scope: user

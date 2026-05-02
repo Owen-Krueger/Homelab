@@ -1,0 +1,10 @@
+---
+- name: Configure IT Tools
+  hosts: it-tools
+  gather_facts: false
+
+  vars_files:
+    - secrets.yaml
+
+  roles:
+    - it_tools_configure

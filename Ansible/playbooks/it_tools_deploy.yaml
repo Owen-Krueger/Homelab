@@ -1,0 +1,32 @@
+---
+# Configures the container, adding a non-root user to use for SSH.
+#- name: Configure IT Tools
+#  hosts: it-tools
+  #remote_user: root # root needs to be used initially to set up ansible user.
+  #gather_facts: true
+#  gather_facts: false
+  #become: true
+  #become_user: root
+
+#  vars_files:
+#    - secrets.yaml
+
+#  vars:
+#    config_user: owen
+
+#  roles:
+#    - container_fedora_configure
+
+- name: Setup podman
+  hosts: it-tools
+  gather_facts: false
+
+  vars_files:
+    - secrets.yaml
+
+  vars:
+    auto_update: true
+
+  roles:
+    - podman_setup
+
