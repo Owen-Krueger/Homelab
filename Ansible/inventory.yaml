@@ -4,11 +4,17 @@ all:
       ansible_host: 192.168.100.151
       ansible_user: owen
       app_name: caddy
+      container_number: 110
+      # Get version from https://go.dev/dl/
+      go_version: "1.25.5"
     it-tools:
       ansible_host: 192.168.100.163
       ansible_user: owen
       app_name: it_tools
+      container_number: 122
     navidrome:
       ansible_host: 192.168.100.156
       ansible_user: owen
       app_name: navidrome
+      container_number: 115
+      navidrome_version: "0.61.2"

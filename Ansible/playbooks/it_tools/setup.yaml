@@ -1,0 +1,9 @@
+---
+- name: Setup IT Tools
+  hosts: navidrome
+  gather_facts: false
+
+  roles:
+    - podman_setup
+    - it_tools_setup
+

@@ -1,0 +1,12 @@
+---
+- name: Update Navidrome
+  ansible.builtin.apt:
+    deb: https://github.com/navidrome/navidrome/releases/download/v{{ navidrome_version }}/navidrome_{{ navidrome_version }}_linux_amd64.deb
+  become: yes
+
+- name: Restart Navidrome
+  ansible.builtin.systemd_service:
+    name: navidrome
+    state: restarted
+    daemon_reload: true
+  become: yes

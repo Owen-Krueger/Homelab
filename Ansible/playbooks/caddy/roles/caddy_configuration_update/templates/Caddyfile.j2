@@ -1,0 +1,146 @@
+{
+    crowdsec {
+        api_url http://localhost:8080
+        api_key {{ crowdsec_api_key }}
+        ticker_interval 15s
+        # appsec_url http://localhost:7422
+    }
+
+    log {
+        output file /var/log/caddy/access.log {
+            roll_size 30MiB
+            roll_keep 5
+        }
+
+        format console
+    }
+
+
+    order crowdsec before reverse_proxy
+}
+
+*.owenkrueger.com {
+    crowdsec
+    log
+
+    tls {
+        dns cloudflare {{ caddy_cloudflare_api_key }}
+        propagation_delay 2m
+        resolvers 1.1.1.1
+    }
+
+    @authentik host auth.owenkrueger.com
+    handle @authentik {
+        reverse_proxy {{caddy_authentik_ip}}
+    }
+    
+    @firefly host budget.owenkrueger.com
+    handle @firefly {
+
+        reverse_proxy {{caddy_firefly_ip}}
+    }
+
+    @nextcloud host cloud.owenkrueger.com
+    handle @nextcloud {
+        reverse_proxy {{caddy_nextcloud_ip}}
+    }
+
+    @dockge host docker.owenkrueger.com 
+    handle @dockge {
+        reverse_proxy {{caddy_dockge_ip}}
+    }
+
+    @paperlessngx host documents.owenkrueger.com 
+    handle @paperlessngx {
+        reverse_proxy {{caddy_paperless_ip}}
+    }
+
+    @esphome host esp.owenkrueger.com
+    handle @esphome {
+        reverse_proxy {{caddy_esp_ip}}
+    }
+
+    @homeassistant host hassio.owenkrueger.com
+    handle @homeassistant {
+        reverse_proxy {{caddy_homeassistant_ip}}
+    }
+
+    @karakeep host hoarder.owenkrueger.com
+    handle @karakeep {
+        reverse_proxy {{caddy_karakeep_ip}}
+    }
+
+    @snipeit host inventory.owenkrueger.com 
+    handle @snipeit {
+        reverse_proxy {{caddy_snipeit_ip}}
+    }
+
+    @joplin host joplin.owenkrueger.com
+    handle @joplin {
+        reverse_proxy {{caddy_joplin_ip}}
+    }
+
+    @navidrome host music.owenkrueger.com
+    handle @navidrome {
+        reverse_proxy {{caddy_navidrome_ip}}
+    }
+
+    @truenas host nas.owenkrueger.com
+    handle @truenas {
+        reverse_proxy {{caddy_truenas_ip}}
+    }
+
+    @immich host photos.owenkrueger.com
+    handle @immich {
+        reverse_proxy {{caddy_immich_ip}}
+    }
+
+    @plex host plex.owenkrueger.com
+    handle @plex {
+        encode gzip
+        reverse_proxy {{caddy_plex_ip}}
+    }
+
+    @proxmox host proxmox.owenkrueger.com
+    handle @proxmox {
+        reverse_proxy {{caddy_proxmox_ip}}
+    }
+
+    @ittools host tools.owenkrueger.com
+    handle @ittools {
+        reverse_proxy {{caddy_ittools_ip}}
+    }
+
+    @jellyfin host videos.owenkrueger.com
+    handle @jellyfin {
+        reverse_proxy {{caddy_jellyfin_ip}}
+    }
+
+    # Fallback for otherwise unhandled domains
+    handle {
+        abort
+    }
+}
+
+eloe.xyz {
+    tls {
+        dns cloudflare {{ caddy_cloudflare_api_key }}
+        propagation_delay 2m
+        resolvers 1.1.1.1
+    }
+
+    # Handle Matrix federation discovery
+    handle /.well-known/matrix/server {
+        respond `{"m.server": "eloe.xyz:443"}` 200
+        header Content-Type application/json
+    }
+
+    # Handle Matrix client discovery
+    handle /.well-known/matrix/client {
+        respond `{"m.homeserver": {"base_url": "https://eloe.xyz"}}` 200
+        header Content-Type application/json
+    }
+
+    # Reverse proxy to Synapse
+    reverse_proxy {{caddy_matrix_ip}}
+}

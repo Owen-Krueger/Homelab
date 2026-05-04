@@ -1,0 +1,54 @@
+---
+- name: Wait for container SSH to be available
+  ansible.builtin.wait_for_connection:
+    timeout: 60
+
+- name: Install common packages
+  ansible.builtin.apt:
+    name:
+      - python3
+      - python3-apt
+      - curl
+      - wget
+      - sudo
+    state: present
+    update_cache: yes
+  become: true
+
+- name: Ensure non-root user exists (optional)
+  ansible.builtin.user:
+    name: "{{ config_user | default('owen') }}"
+    password: "{{ owen_user_password | password_hash('sha512') }}" # Passwords must be hashed.
+    shell: /bin/bash
+    groups: sudo
+    append: yes
+  become: true
+  when: config_user is defined
+
+- name: Add public key for non-root user (optional)
+  ansible.posix.authorized_key:
+    user: "{{ config_user | default('owen') }}"
+    state: present
+    key: "{{ proxmox_public_key }}"
+  become: true
+  when: config_user is defined
+
+- name: Enable passwordless sudo for user (optional)
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers
+    line: "{{ config_user | default('owen') }} ALL=(ALL) NOPASSWD: ALL"
+    validate: "visudo -cf %s"
+  become: true
+  when: config_user is defined
+
+- name: Template sshd_config
+  ansible.builtin.template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+  become: true
+
+- name: Reload sshd service
+  ansible.builtin.systemd:
+    name: sshd
+    state: reloaded
+  become: true

@@ -1,0 +1,37 @@
+---
+#- name: apt update
+#  ansible.builtin.apt:
+#    update_cache: yes
+#  become: true
+
+- name: Install podman
+  ansible.builtin.dnf:
+    name:
+      - podman
+    state: latest
+  become: true
+
+#- name: Add UIDs and GIDs for rootless
+#  ansible.builtin.shell: usermod --add-subuids 10000-15000 --add-subgids 10000-15000 owen
+#  become: true
+
+- name: Creates containers directory
+  ansible.builtin.file:
+    path: ~/.config/containers/systemd
+    state: directory
+
+# So the containers will run after ssh is disconnected.
+- name: Enable linger
+  ansible.builtin.shell: loginctl enable-linger owen
+  become: true
+
+#- name: Enable auto-update (optional)
+#  ansible.builtin.shell: systemctl --user enable --now podman-auto-update.timer
+#  when: auto_update | bool == true
+
+- name: Enable auto-update (optional)
+  ansible.builtin.systemd_service:
+    name: podman-auto-update.timer
+    enabled: true
+    scope: user
+  when: auto_update | bool == true

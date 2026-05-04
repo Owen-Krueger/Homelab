@@ -1,0 +1,13 @@
+---
+- name: Update Caddy
+  hosts: caddy
+  gather_facts: false
+
+  tasks:
+    - name: Update Caddy and xcaddy
+      ansible.builtin.apt:
+        name:
+          - caddy
+          - xcaddy
+        state: latest
+      become: true
