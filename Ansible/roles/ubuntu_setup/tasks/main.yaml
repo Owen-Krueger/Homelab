@@ -1,8 +1,4 @@
 ---
-- name: Wait for container SSH to be available
-  ansible.builtin.wait_for_connection:
-    timeout: 60
-
 - name: Install common packages
   ansible.builtin.apt:
     name:

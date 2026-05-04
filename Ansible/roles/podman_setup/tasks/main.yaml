@@ -34,4 +34,4 @@
     name: podman-auto-update.timer
     enabled: true
     scope: user
-  when: auto_update | bool == true
+  when: podman_auto_update | bool == true

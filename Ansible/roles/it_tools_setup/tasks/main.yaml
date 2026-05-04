@@ -1,0 +1,16 @@
+---
+- name: Add firewall port
+  ansible.posix.firewalld:
+    port: 8080/tcp
+    permanent: true
+    state: enabled
+
+- name: Copy container to host
+  ansible.builtin.copy:
+    src: it_tools.container
+    dest: /tmp/it_tools.container
+  
+- name: Install IT Tools container
+  containers.podman.podman_quadlet:
+    state: present
+    src: /tmp/it_tools.container

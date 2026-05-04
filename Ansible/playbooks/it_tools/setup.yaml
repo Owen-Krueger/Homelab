@@ -1,6 +1,6 @@
 ---
 - name: Setup IT Tools
-  hosts: navidrome
+  hosts: it-tools
   gather_facts: false
 
   roles:
