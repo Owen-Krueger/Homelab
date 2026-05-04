@@ -1,0 +1,5 @@
+---
+- name: Install IT Tools quadlet
+  containers.podman.podman_quadlet:
+    state: present
+    src: /it_tools.quadlets

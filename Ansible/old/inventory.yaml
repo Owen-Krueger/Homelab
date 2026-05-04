@@ -1,0 +1,33 @@
+all:
+  hosts:
+    proxmox:
+      ansible_host: 192.168.200.155
+      ansible_user: root
+    authentik:
+      ansible_host: 192.168.100.153
+      ansible_user: owen
+    caddy:
+      ansible_host: 192.168.100.151
+      ansible_user: owen
+      ansible_python_interpreter: /usr/bin/python3
+    jellyfin:
+      ansible_host: 192.168.200.169
+      ansible_user: owen
+    navidrome:
+      ansible_host: 192.168.100.156
+      ansible_user: owen
+    nextcloud:
+      ansible_host: 192.168.100.159
+      ansible_user: owen
+    matrix:
+      ansible_host: 192.168.100.160
+      ansible_user: owen
+    immich:
+      ansible_host: 192.168.100.155
+      ansible_user: owen
+    it-tools:
+      ansible_host: 192.168.100.163
+      ansible_user: owen
+    plex:
+      ansible_host: 192.168.200.154
+      ansible_user: owen
