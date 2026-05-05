@@ -1,0 +1,82 @@
+---
+- name: Add firewall port (9000)
+  ansible.posix.firewalld:
+    port: 9000/tcp
+    permanent: true
+    state: enabled
+
+- name: Add firewall port (9443)
+  ansible.posix.firewalld:
+    port: 9443/tcp
+    permanent: true
+    state: enabled
+
+- name: Mount NFS Branding
+  ansible.posix.mount:
+    src: '{{ nas_ip }}:/mnt/Eve2/NAS/Owen'
+    path: /mnt/truenas/owen
+    opts: ro
+    state: mounted
+    fstype: nfs
+
+- name: Copy environment variables files
+  ansible.builtin.copy:
+    src: authentik.env
+    dest: /tmp/authentik.env
+
+- name: Copy secrets variables files
+  ansible.builtin.copy:
+    src: secrets.env
+    dest: /tmp/secrets.env
+
+- name: Copy postgresql container to host
+  ansible.builtin.copy:
+    src: postgresql.container
+    dest: /tmp/postgresql.container
+  
+- name: Copy redis container to host
+  ansible.builtin.copy:
+    src: redis.container
+    dest: /tmp/redis.container
+
+- name: Copy worker container to host
+  ansible.builtin.copy:
+    src: worker.container
+    dest: /tmp/worker.container
+
+- name: Copy server container to host
+  ansible.builtin.copy:
+    src: server.container
+    dest: /tmp/server.container
+
+- name: Install postgresql container
+  containers.podman.podman_quadlet:
+    state: present
+    src: /tmp/postgresql.container
+    files:
+      - /tmp/authentik.env
+      - /tmp/secrets.env
+
+- name: Install redis container
+  containers.podman.podman_quadlet:
+    state: present
+    src: /tmp/redis.container
+    files:
+      - /tmp/authentik.env
+      - /tmp/secrets.env
+
+- name: Install worker container
+  containers.podman.podman_quadlet:
+    state: present
+    src: /tmp/worker.container
+    files:
+      - /tmp/authentik.env
+      - /tmp/secrets.env
+
+- name: Install server container
+  containers.podman.podman_quadlet:
+    state: present
+    src: /tmp/server.container
+    files:
+      - /tmp/authentik.env
+      - /tmp/secrets.env

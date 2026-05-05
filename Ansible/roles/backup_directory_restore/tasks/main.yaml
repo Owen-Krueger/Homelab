@@ -1,0 +1,13 @@
+---
+- name: Extract {{ backup_target_directory }} archive
+  ansible.builtin.unarchive:
+    src: "/mnt/truenas/backups/{{ app_name }}/files/{{ backup_target_directory }}.gz"
+    dest: "/tmp/{{ app_name }}/files/{{ backup_target_directory }}"
+    remote_src: true
+
+- name: Restore files
+  ansible.builtin.copy:
+    src: "/tmp/{{ app_name }}/files/{{ backup_target_directory }}/"
+    dest: "{{ backup_source_directory }}/"
+    mode: preserve
+    remote_src: true

@@ -1,0 +1,66 @@
+---
+# Backup/Restore
+- name: Restore and Set Up Backup (data)
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    backup_source_directory: data
+    backup_target_directory: data
+
+  roles:
+    - backup_directory_restore
+    - backup_directory_backup
+
+- name: Restore and Set Up Backup (certs)
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    backup_source_directory: certs
+    backup_target_directory: certs
+
+  roles:
+    - backup_directory_restore
+    - backup_directory_backup
+
+- name: Restore and Set Up Backup (custom-templates)
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    backup_source_directory: custom-templates
+    backup_target_directory: custom-templates
+
+  roles:
+    - backup_directory_restore
+    - backup_directory_backup
+
+- name: Restore and Set Up Backup (blueprints)
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    backup_source_directory: blueprints
+    backup_target_directory: blueprints
+
+  roles:
+    - backup_directory_restore
+    - backup_directory_backup
+
+- name: Restore and Set Up Backup Database
+  hosts: authentik
+  gather_facts: false
+
+  roles:
+    - backup_postgresql_restore
+    - backup_postgresql_backup
+
+# Install application
+- name: Setup Authentik
+  hosts: authentik
+  gather_facts: false
+  
+  roles:
+    - podman_setup
+    - authentik_setup

@@ -1,0 +1,26 @@
+[Unit]
+Description=Authentik
+Wants=network-online.target postgresql.service redis.service
+After=network-online.target postgresql.service redis.service
+
+[Container]
+Image=ghcr.io/goauthentik/server:2026.2.2
+ContainerName=server
+Exec=server
+PublishPort=9000:9000
+PublishPort=9443:9443
+Volume=./media:/media
+Volume=./custom-templates:/templates
+Environment="AUTHENTIK_SECRET_KEY=${AUTHENTIK_SECRET_KEY:?secret key required}"
+Environment=AUTHENTIK_REDIS__HOST=redis
+Environment=AUTHENTIK_POSTGRESQL__HOST=postgresql
+Environment=AUTHENTIK_POSTGRESQL__USER=authentik
+Environment=AUTHENTIK_POSTGRESQL__NAME=authentik
+Environment=AUTHENTIK_POSTGRESQL__PASSWORD=${PG_PASS}
+EnvironmentFile=.env
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

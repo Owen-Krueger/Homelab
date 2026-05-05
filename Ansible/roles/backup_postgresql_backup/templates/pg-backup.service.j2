@@ -1,0 +1,12 @@
+[Unit]
+Description=PostgreSQL backup for {{ app_name }}
+After=postgresql.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c 'pg_dump -d {{ database_name }} | gzip > /mnt/truenas/backups/{{ app_name }}/database/{{ database_name }}.gz'
+User=postgres
+Group=postgres
+
+[Install]
+WantedBy=multi-user.target

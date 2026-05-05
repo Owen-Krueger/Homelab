@@ -1,5 +1,11 @@
 all:
   hosts:
+    authentik:
+      ansible_host: 192.168.100.157
+      ansible_user: owen
+      app_name: authentik
+      container_number: 116
+      database_name: authentik
     caddy:
       ansible_host: 192.168.100.151
       ansible_user: owen
