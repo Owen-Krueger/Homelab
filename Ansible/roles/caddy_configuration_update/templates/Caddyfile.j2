@@ -34,10 +34,10 @@
         reverse_proxy {{caddy_authentik_ip}}
     }
     
-    @firefly host budget.owenkrueger.com
-    handle @firefly {
+    @actualbudget host budget.owenkrueger.com
+    handle @actualbudget {
 
-        reverse_proxy {{caddy_firefly_ip}}
+        reverse_proxy {{caddy_actual_budget_ip}}
     }
 
     @nextcloud host cloud.owenkrueger.com

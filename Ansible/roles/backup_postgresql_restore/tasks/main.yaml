@@ -1,6 +1,12 @@
 ---
+#- name: Install psycopg2
+#  ansible.builtin.dnf:
+#    name: psycopg2
+#    state: latest
+#  become: true
+
 - name: Restore database
   community.postgresql.postgresql_db:
-    name: {{ database_name }}
+    name: "{{ database_name }}"
     state: restore
     target: /mnt/truenas/backups/{{ app_name }}/database/{{ database_name }}.gz

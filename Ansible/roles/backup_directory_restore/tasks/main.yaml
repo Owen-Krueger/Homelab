@@ -1,9 +1,22 @@
 ---
+- name: Check if backup archive exists
+  ansible.builtin.stat:
+    path: "/mnt/truenas/backups/{{ app_name }}/files/{{ backup_target_directory }}.tar.gz"
+  register: backup_archive
+
+- name: Ensure backup directory exists
+  ansible.builtin.file:
+    path: "/tmp/{{ app_name }}/files/{{ backup_target_directory }}"
+    state: directory
+    mode: '0755'
+  when: backup_archive.stat.exists
+
 - name: Extract {{ backup_target_directory }} archive
   ansible.builtin.unarchive:
-    src: "/mnt/truenas/backups/{{ app_name }}/files/{{ backup_target_directory }}.gz"
+    src: "/mnt/truenas/backups/{{ app_name }}/files/{{ backup_target_directory }}.tar.gz"
     dest: "/tmp/{{ app_name }}/files/{{ backup_target_directory }}"
     remote_src: true
+  when: backup_archive.stat.exists
 
 - name: Restore files
   ansible.builtin.copy:
@@ -11,3 +24,5 @@
     dest: "{{ backup_source_directory }}/"
     mode: preserve
     remote_src: true
+  become: true
+  when: backup_archive.stat.exists

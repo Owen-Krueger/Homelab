@@ -4,12 +4,51 @@
     port: 9000/tcp
     permanent: true
     state: enabled
+  become: true
 
 - name: Add firewall port (9443)
   ansible.posix.firewalld:
     port: 9443/tcp
     permanent: true
     state: enabled
+  become: true
+
+# Secrets
+- name: Add Podman secret (POSTGRES_PASSWORD)
+  containers.podman.podman_secret:
+    state: present
+    name: POSTGRES_PASSWORD
+    data: "{{ authentik_db_password }}"
+
+- name: Add Podman secret (AUTHENTIK_POSTGRESQL__PASSWORD)
+  containers.podman.podman_secret:
+    state: present
+    name: AUTHENTIK_POSTGRESQL__PASSWORD
+    data: "{{ authentik_db_password }}"
+
+- name: Add Podman secret (AUTHENTIK_SECRET_KEY)
+  containers.podman.podman_secret:
+    state: present
+    name: AUTHENTIK_SECRET_KEY
+    data: "{{ authentik_secret_key }}"
+
+- name: Add Podman secret (AUTHENTIK_EMAIL__USERNAME)
+  containers.podman.podman_secret:
+    state: present
+    name: AUTHENTIK_EMAIL__USERNAME
+    data: "{{ authentik_email_username }}"
+
+- name: Add Podman secret (AUTHENTIK_EMAIL__PASSWORD)
+  containers.podman.podman_secret:
+    state: present
+    name: AUTHENTIK_EMAIL__PASSWORD
+    data: "{{ authentik_email_password }}"
+
+- name: Add Podman secret (AUTHENTIK_EMAIL__FROM)
+  containers.podman.podman_secret:
+    state: present
+    name: AUTHENTIK_EMAIL__FROM
+    data: "{{ authentik_email_from }}"
 
 - name: Mount NFS Branding
   ansible.posix.mount:
@@ -18,65 +57,30 @@
     opts: ro
     state: mounted
     fstype: nfs
+  become: true
 
-- name: Copy environment variables files
+# Copy files to host
+- name: Copy authentik network to host
   ansible.builtin.copy:
-    src: authentik.env
-    dest: /tmp/authentik.env
-
-- name: Copy secrets variables files
-  ansible.builtin.copy:
-    src: secrets.env
-    dest: /tmp/secrets.env
+    src: authentik.network
+    dest: '{{ podman_container_directory }}/authentik.network'
 
 - name: Copy postgresql container to host
-  ansible.builtin.copy:
-    src: postgresql.container
-    dest: /tmp/postgresql.container
+  ansible.builtin.template:
+    src: postgresql.j2
+    dest: '{{ podman_container_directory }}/postgresql.container'
   
 - name: Copy redis container to host
   ansible.builtin.copy:
     src: redis.container
-    dest: /tmp/redis.container
+    dest: '{{ podman_container_directory }}/redis.container'
 
 - name: Copy worker container to host
-  ansible.builtin.copy:
-    src: worker.container
-    dest: /tmp/worker.container
+  ansible.builtin.template:
+    src: worker.j2
+    dest: '{{ podman_container_directory }}/worker.container'
 
 - name: Copy server container to host
-  ansible.builtin.copy:
-    src: server.container
-    dest: /tmp/server.container
-
-- name: Install postgresql container
-  containers.podman.podman_quadlet:
-    state: present
-    src: /tmp/postgresql.container
-    files:
-      - /tmp/authentik.env
-      - /tmp/secrets.env
-
-- name: Install redis container
-  containers.podman.podman_quadlet:
-    state: present
-    src: /tmp/redis.container
-    files:
-      - /tmp/authentik.env
-      - /tmp/secrets.env
-
-- name: Install worker container
-  containers.podman.podman_quadlet:
-    state: present
-    src: /tmp/worker.container
-    files:
-      - /tmp/authentik.env
-      - /tmp/secrets.env
-
-- name: Install server container
-  containers.podman.podman_quadlet:
-    state: present
-    src: /tmp/server.container
-    files:
-      - /tmp/authentik.env
-      - /tmp/secrets.env
+  ansible.builtin.template:
+    src: server.j2
+    dest: '{{ podman_container_directory }}/server.container'

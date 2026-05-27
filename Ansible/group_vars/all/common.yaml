@@ -1,0 +1,3 @@
+podman_container_directory: ~/.config/containers/systemd
+podman_rootless_user: owen
+podman_rootless_password: owen

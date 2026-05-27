@@ -1,11 +1,29 @@
 ---
+# Set up directories
+- name: Create directories
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    directories:
+      - path: '/home/owen/authentik/data'
+      - path: '/home/owen/authentik/certs'
+      - path: '/home/owen/authentik/templates'
+      - path: '/home/owen/authentik/blueprints'
+      - path: '/home/owen/authentik/media'
+      - path: '/home/owen/authentik/database'
+      - path: '/home/owen/authentik/redis'
+
+  roles:
+    - common_create_directories
+
 # Backup/Restore
 - name: Restore and Set Up Backup (data)
   hosts: authentik
   gather_facts: false
 
   vars:
-    backup_source_directory: data
+    backup_source_directory: '/home/owen/authentik/data'
     backup_target_directory: data
 
   roles:
@@ -17,7 +35,7 @@
   gather_facts: false
 
   vars:
-    backup_source_directory: certs
+    backup_source_directory: '/home/owen/authentik/certs'
     backup_target_directory: certs
 
   roles:
@@ -29,8 +47,8 @@
   gather_facts: false
 
   vars:
-    backup_source_directory: custom-templates
-    backup_target_directory: custom-templates
+    backup_source_directory: '/home/owen/authentik/templates'
+    backup_target_directory: templates
 
   roles:
     - backup_directory_restore
@@ -41,20 +59,24 @@
   gather_facts: false
 
   vars:
-    backup_source_directory: blueprints
+    backup_source_directory: '/home/owen/authentik/blueprints'
     backup_target_directory: blueprints
 
   roles:
     - backup_directory_restore
     - backup_directory_backup
 
-- name: Restore and Set Up Backup Database
+- name: Restore and Set Up Backup (media)
   hosts: authentik
   gather_facts: false
 
+  vars:
+    backup_source_directory: '/home/owen/authentik/media'
+    backup_target_directory: media
+
   roles:
-    - backup_postgresql_restore
-    - backup_postgresql_backup
+    - backup_directory_restore
+    - backup_directory_backup
 
 # Install application
 - name: Setup Authentik
@@ -64,3 +86,52 @@
   roles:
     - podman_setup
     - authentik_setup
+
+- name: Install postgresql
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    service_name: postgresql
+
+  roles:
+    - podman_container_start
+
+- name: Install redis
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    service_name: redis
+
+  roles:
+    - podman_container_start
+
+- name: Install server
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    service_name: server
+
+  roles:
+    - podman_container_start
+
+- name: Install worker
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    service_name: worker
+
+  roles:
+    - podman_container_start
+
+# This is done after the database is set up, or pg_dump/pg_restore wouldn't work.
+#- name: Restore and Set Up Backup Database
+#  hosts: authentik
+#  gather_facts: false
+
+#  roles:
+#    - backup_postgresql_restore
+#    - backup_postgresql_backup

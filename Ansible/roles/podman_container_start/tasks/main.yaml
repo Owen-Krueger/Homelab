@@ -1,0 +1,17 @@
+- name: Stop {{ service_name }}
+  ansible.builtin.systemd_service:
+    name: '{{ service_name }}'
+    scope: user
+    state: stopped
+
+- name: Restart user daemon
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+    scope: user
+
+- name: Start {{ service_name }}
+  ansible.builtin.systemd_service:
+    name: '{{ service_name }}'
+    state: started
+    enabled: true
+    scope: user

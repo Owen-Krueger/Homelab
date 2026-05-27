@@ -4,6 +4,7 @@
     port: 8080/tcp
     permanent: true
     state: enabled
+  become: true
 
 - name: Copy container to host
   ansible.builtin.copy:

@@ -1,0 +1,36 @@
+[Unit]
+Description=Authentik
+Wants=network-online.target postgresql.service redis.service
+After=network-online.target postgresql.service redis.service
+
+[Container]
+Image=ghcr.io/goauthentik/server:{{ authentik_version }}
+ContainerName=worker
+Exec=worker
+Volume=/home/owen/authentik/media:/media:Z
+Volume=/home/owen/authentik/certs:/certs:Z
+Volume=/home/owen/authentik/templates:/templates:Z
+Environment=AUTHENTIK_REDIS__HOST=redis
+Environment=AUTHENTIK_POSTGRESQL__HOST=postgresql
+Environment=AUTHENTIK_POSTGRESQL__USER=authentik
+Environment=AUTHENTIK_POSTGRESQL__NAME=authentik
+Environment=BRANDING_FOLDER=/mnt/truenas/owen/Authentik/Branding
+Environment=AUTHENTIK_EMAIL__HOST=smpt.fastmail.com
+Environment=AUTHENTIK_EMAIL__PORT=465
+Environment=AUTHENTIK_EMAIL__USE_TLS=false
+Environment=AUTHENTIK_EMAIL__USE_SSL=true
+Environment=AUTHENTIK_EMAIL__TIMEOUT=10
+Secret=AUTHENTIK_SECRET_KEY,type=env,target=AUTHENTIK_SECRET_KEY
+Secret=POSTGRES_PASSWORD,type=env,target=POSTGRES_PASSWORD
+Secret=AUTHENTIK_POSTGRESQL__PASSWORD,type=env,target=POSTGRESQL__PASSWORD
+Secret=AUTHENTIK_EMAIL__USERNAME,type=env,target=AUTHENTIK_EMAIL__USERNAME
+Secret=AUTHENTIK_EMAIL__PASSWORD,type=env,target=AUTHENTIK_EMAIL__PASSWORD
+Secret=AUTHENTIK_EMAIL__FROM,type=env,target=AUTHENTIK_EMAIL__FROM
+Network=authentik.network
+#User=root
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
