@@ -33,7 +33,7 @@
       - source_path: '/home/owen/authentik/blueprints'
         target_path: 'blueprints'
       - source_path: '/home/owen/authentik/media'
-        target_Path: 'media'
+        target_path: 'media'
 
   roles:
     - backup_directory_restore
@@ -61,7 +61,7 @@
     - authentik_setup
 
 - name: Add Podman secrets
-  hostS: authentik
+  hosts: authentik
   gather_facts: false
 
   vars:
@@ -92,6 +92,19 @@
   roles:
     - podman_containers_start
 
+# This is done after the database is set up, or pg_dump/pg_restore wouldn't work.
+- name: Restore and Set Up Backup Database
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    service_name: postgresql
+    postgres_user: authentik
+
+  roles:
+    - backup_postgresql_restore
+    - backup_postgresql_backup
+
 - name: Install redis
   hosts: authentik
   gather_facts: false
@@ -121,12 +134,3 @@
 
   roles:
     - podman_containers_start
-
-# This is done after the database is set up, or pg_dump/pg_restore wouldn't work.
-#- name: Restore and Set Up Backup Database
-#  hosts: authentik
-#  gather_facts: false
-
-#  roles:
-#    - backup_postgresql_restore
-#    - backup_postgresql_backup
