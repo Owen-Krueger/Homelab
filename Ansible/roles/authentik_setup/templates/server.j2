@@ -9,8 +9,8 @@ ContainerName=server
 Exec=server
 PublishPort=9000:9000
 PublishPort=9443:9443
-Volume=/home/owen/authentik/media:/media:Z
-Volume=/home/owen/authentik/templates:/templates:Z
+Volume=/home/owen/authentik/media:/media:z
+Volume=/home/owen/authentik/templates:/templates:z
 Environment=AUTHENTIK_REDIS__HOST=redis
 Environment=AUTHENTIK_POSTGRESQL__HOST=postgresql
 Environment=AUTHENTIK_POSTGRESQL__USER=authentik
@@ -30,7 +30,7 @@ Secret=AUTHENTIK_EMAIL__FROM,type=env,target=AUTHENTIK_EMAIL__FROM
 Network=authentik.network
 
 [Service]
-Restart=on-failure
+Restart=always
 
 [Install]
 WantedBy=multi-user.target

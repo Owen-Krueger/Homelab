@@ -33,7 +33,7 @@
     handle @authentik {
         reverse_proxy {{caddy_authentik_ip}}
     }
-    
+
     @actualbudget host budget.owenkrueger.com
     handle @actualbudget {
 
@@ -83,6 +83,11 @@
     @navidrome host music.owenkrueger.com
     handle @navidrome {
         reverse_proxy {{caddy_navidrome_ip}}
+    }
+
+    @obsidian host notes.owenkrueger.com
+    handle @obsidian {
+        reverse_proxy {{caddy_obsidian_ip}}
     }
 
     @truenas host nas.owenkrueger.com

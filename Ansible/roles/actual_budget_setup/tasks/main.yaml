@@ -1,11 +1,4 @@
 ---
-- name: Add firewall port
-  ansible.posix.firewalld:
-    port: 5006/tcp
-    permanent: true
-    state: enabled
-  become: true
-
 #- name: Create bind directory
 #  ansible.builtin.file:
 #    path: "/home/owen/data"

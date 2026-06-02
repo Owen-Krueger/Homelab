@@ -18,65 +18,38 @@
     - common_create_directories
 
 # Backup/Restore
-- name: Restore and Set Up Backup (data)
-  hosts: authentik
+- name: Restore and Set Up Backups
+  hosts: obsidian
   gather_facts: false
 
   vars:
-    backup_source_directory: '/home/owen/authentik/data'
-    backup_target_directory: data
+    directories:
+      - source_path: '/home/owen/authentik/data'
+        target_path: 'data'
+      - source_path: '/home/owen/authentik/certs'
+        target_path: 'certs'
+      - source_path: '/home/owen/authentik/templates'
+        target_path: 'templates'
+      - source_path: '/home/owen/authentik/blueprints'
+        target_path: 'blueprints'
+      - source_path: '/home/owen/authentik/media'
+        target_Path: 'media'
 
   roles:
     - backup_directory_restore
     - backup_directory_backup
 
-- name: Restore and Set Up Backup (certs)
+- name: Add firewall ports
   hosts: authentik
   gather_facts: false
 
   vars:
-    backup_source_directory: '/home/owen/authentik/certs'
-    backup_target_directory: certs
+    ports:
+      - port: 9000
+      - port: 9443
 
   roles:
-    - backup_directory_restore
-    - backup_directory_backup
-
-- name: Restore and Set Up Backup (custom-templates)
-  hosts: authentik
-  gather_facts: false
-
-  vars:
-    backup_source_directory: '/home/owen/authentik/templates'
-    backup_target_directory: templates
-
-  roles:
-    - backup_directory_restore
-    - backup_directory_backup
-
-- name: Restore and Set Up Backup (blueprints)
-  hosts: authentik
-  gather_facts: false
-
-  vars:
-    backup_source_directory: '/home/owen/authentik/blueprints'
-    backup_target_directory: blueprints
-
-  roles:
-    - backup_directory_restore
-    - backup_directory_backup
-
-- name: Restore and Set Up Backup (media)
-  hosts: authentik
-  gather_facts: false
-
-  vars:
-    backup_source_directory: '/home/owen/authentik/media'
-    backup_target_directory: media
-
-  roles:
-    - backup_directory_restore
-    - backup_directory_backup
+    - fedora_firewall_enable_ports
 
 # Install application
 - name: Setup Authentik
@@ -87,6 +60,28 @@
     - podman_setup
     - authentik_setup
 
+- name: Add Podman secrets
+  hostS: authentik
+  gather_facts: false
+
+  vars:
+    secrets:
+      - key: POSTGRES_PASSWORD
+        value: "{{ authentik_db_password }}"
+      - key: AUTHENTIK_POSTGRESQL__PASSWORD
+        value: "{{ authentik_db_password }}"
+      - key: AUTHENTIK_SECRET_KEY
+        value: "{{ authentik_secret_key }}"
+      - key: AUTHENTIK_EMAIL__USERNAME
+        value: "{{ authentik_email_username }}"
+      - key: AUTHENTIK_EMAIL__PASSWORD
+        value: "{{ authentik_email_password }}"
+      - key: AUTHENTIK_EMAIL__FROM
+        value: "{{ authentik_email_from }}"
+
+  roles:
+    - podman_secrets_add
+
 - name: Install postgresql
   hosts: authentik
   gather_facts: false
@@ -95,7 +90,7 @@
     service_name: postgresql
 
   roles:
-    - podman_container_start
+    - podman_containers_start
 
 - name: Install redis
   hosts: authentik
@@ -105,7 +100,7 @@
     service_name: redis
 
   roles:
-    - podman_container_start
+    - podman_containers_start
 
 - name: Install server
   hosts: authentik
@@ -115,7 +110,7 @@
     service_name: server
 
   roles:
-    - podman_container_start
+    - podman_containers_start
 
 - name: Install worker
   hosts: authentik
@@ -125,7 +120,7 @@
     service_name: worker
 
   roles:
-    - podman_container_start
+    - podman_containers_start
 
 # This is done after the database is set up, or pg_dump/pg_restore wouldn't work.
 #- name: Restore and Set Up Backup Database

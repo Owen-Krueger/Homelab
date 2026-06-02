@@ -1,10 +1,10 @@
 [Unit]
-Description=Directory backup for {{ app_name }} ({{ backup_target_directory }})
+Description=Directory backup for {{ app_name }} ({{ item.target_path }})
 After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash -c 'tar -czf /mnt/truenas/backups/{{ app_name }}/files/{{ backup_target_directory }}.tar.gz -C {{ backup_source_directory }} .'
+ExecStart=/bin/bash -c 'tar -czf /mnt/truenas/backups/{{ app_name }}/files/{{ item.target_path }}.tar.gz -C {{ item.source_path }} .'
 #User=root
 #Group=root
 User=owen

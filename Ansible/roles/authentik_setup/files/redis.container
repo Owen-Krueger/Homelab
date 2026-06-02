@@ -16,7 +16,7 @@ HealthTimeout=3s
 Network=authentik.network
 
 [Service]
-Restart=on-failure
+Restart=always
 
 [Install]
 WantedBy=multi-user.target

@@ -1,0 +1,8 @@
+---
+- name: Add Podman secrets
+  containers.podman.podman_secret:
+    state: present
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+  loop: "{{ secrets }}"
+  no_log: true # Prevent us from saving passwords to log files.

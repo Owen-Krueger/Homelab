@@ -7,9 +7,9 @@ After=network-online.target postgresql.service redis.service
 Image=ghcr.io/goauthentik/server:{{ authentik_version }}
 ContainerName=worker
 Exec=worker
-Volume=/home/owen/authentik/media:/media:Z
-Volume=/home/owen/authentik/certs:/certs:Z
-Volume=/home/owen/authentik/templates:/templates:Z
+Volume=/home/owen/authentik/media:/media:z
+Volume=/home/owen/authentik/certs:/certs:z
+Volume=/home/owen/authentik/templates:/templates:z
 Environment=AUTHENTIK_REDIS__HOST=redis
 Environment=AUTHENTIK_POSTGRESQL__HOST=postgresql
 Environment=AUTHENTIK_POSTGRESQL__USER=authentik
@@ -30,7 +30,7 @@ Network=authentik.network
 #User=root
 
 [Service]
-Restart=on-failure
+Restart=always
 
 [Install]
 WantedBy=multi-user.target

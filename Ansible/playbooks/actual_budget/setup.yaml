@@ -11,6 +11,18 @@
     - backup_directory_restore
     - backup_directory_backup
 
+
+- name: Add firewall ports
+  hosts: actual-budget
+  gather_facts: false
+
+  vars:
+    ports:
+      - port: 5006
+
+  roles:
+    - fedora_firewall_enable_ports
+
 - name: Setup Actual Budget
   hosts: actual-budget
   gather_facts: false

@@ -12,7 +12,7 @@ all:
       app_name: authentik
       container_number: 116
       database_name: authentik
-      authentik_version: 2026.5.0
+      authentik_version: 2026.5.2
     caddy:
       ansible_host: 192.168.100.151
       ansible_user: owen
@@ -32,3 +32,9 @@ all:
       app_name: navidrome
       container_number: 115
       navidrome_version: "0.61.2"
+    obsidian:
+      ansible_host: 192.168.100.165
+      ansible_user: owen
+      app_name: obsidian
+      container_number: 124
+      podman_auto_update: true

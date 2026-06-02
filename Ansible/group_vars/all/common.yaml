@@ -1,3 +1,4 @@
 podman_container_directory: ~/.config/containers/systemd
-podman_rootless_user: owen
-podman_rootless_password: owen
+
+obsidian_ip: 192.168.100.165
+obsidian_port: 5984
