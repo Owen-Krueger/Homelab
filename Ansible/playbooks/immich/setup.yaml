@@ -1,0 +1,53 @@
+---
+- name: Create directories
+  hosts: immich
+  gather_facts: false
+
+  vars:
+    directories:
+      - path: '/home/owen/immich/data'
+      - path: '/home/owen/immich/cache'
+
+  roles:
+    - common_create_directories
+
+- name: Add firewall ports
+  hosts: immich
+  gather_facts: false
+
+  vars:
+    ports:
+      - port: 2283
+
+  roles:
+    - fedora_firewall_enable_ports
+
+- name: Setup Podman
+  hosts: immich
+  gather_facts: false
+  
+  roles:
+    - podman_setup
+
+- name: Add Podman secrets
+  hosts: immich
+  gather_facts: false
+
+  vars:
+    secrets:
+      - key: POSTGRES_PASSWORD
+        value: "{{ immich_db_password }}"
+
+  roles:
+    - podman_secrets_add
+
+- name: Install services
+  hosts: immich
+  gather_facts: false
+
+  vars:
+    initial_install: true
+
+  roles:
+    - immich_copy_services
+    - immich_install_services

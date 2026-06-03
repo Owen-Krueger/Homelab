@@ -1,0 +1,26 @@
+---
+# Copy files to host
+- name: Copy immich network to host
+  ansible.builtin.copy:
+    src: immich.network
+    dest: '{{ podman_container_directory }}/immich.network'
+
+- name: Copy database container to host
+  ansible.builtin.template:
+    src: database.j2
+    dest: '{{ podman_container_directory }}/database.container'
+  
+- name: Copy redis container to host
+  ansible.builtin.copy:
+    src: redis.container
+    dest: '{{ podman_container_directory }}/redis.container'
+
+- name: Copy machine_learning container to host
+  ansible.builtin.template:
+    src: machine_learning.j2
+    dest: '{{ podman_container_directory }}/machine_learning.container'
+
+- name: Copy server container to host
+  ansible.builtin.template:
+    src: server.j2
+    dest: '{{ podman_container_directory }}/server.container'

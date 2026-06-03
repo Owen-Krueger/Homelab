@@ -1,9 +1,19 @@
 ---
-- name: Install postgresql
+- name: Mount Pictures NFS Share
+  ansible.posix.mount:
+    src: '{{ nas_ip }}:/mnt/Eve2/NAS/Pictures'
+    path: /mnt/truenas/pictures
+    opts: rw,sync,hard
+    state: mounted
+    fstype: nfs
+  become: true
+  when: initial_install | bool == true
+
+- name: Install database
   ansible.builtin.include_role:
     name: podman_containers_start
   vars:
-    service_name: postgresql
+    service_name: database
 
 - name: Pause for 30 seconds for the database to start up
   ansible.builtin.pause:
@@ -14,18 +24,16 @@
   ansible.builtin.include_role:
     name: backup_postgresql_restore
   vars:
-    service_name: postgresql
-    postgres_user: authentik
-    database_name: authentik
+    service_name: database
+    database_name: immich
   when: initial_install | bool == true
 
 - name: Set Up Backup Database
   ansible.builtin.include_role:
     name: backup_postgresql_backup
   vars:
-    service_name: postgresql
-    postgres_user: authentik
-    database_name: authentik
+    service_name: database
+    database_name: immich
   when: initial_install | bool == true
 
 - name: Install redis
@@ -34,14 +42,14 @@
   vars:
     service_name: redis
 
+- name: Install machine_learning
+  ansible.builtin.include_role:
+    name: podman_containers_start
+  vars:
+    service_name: machine_learning
+
 - name: Install server
   ansible.builtin.include_role:
     name: podman_containers_start
   vars:
     service_name: server
-
-- name: Install worker
-  ansible.builtin.include_role:
-    name: podman_containers_start
-  vars:
-    service_name: worker

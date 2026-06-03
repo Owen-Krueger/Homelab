@@ -1,0 +1,11 @@
+---
+- name: Install services
+  hosts: immich
+  gather_facts: false
+
+  vars:
+    initial_install: false
+
+  roles:
+    - immich_copy_services
+    - immich_install_services

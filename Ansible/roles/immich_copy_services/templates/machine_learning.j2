@@ -1,0 +1,23 @@
+[Unit]
+Description=Immich Machine Learning
+Wants=network-online.target
+After=network-online.target
+
+[Container]
+Image=ghcr.io/immich-app/immich-machine-learning:{{ immich_version }}
+ContainerName=immich-machine-learning
+Volume=/home/owen/immich/cache:/cache:Z
+Network=immich.network
+
+Environment=IMMICH_VERSION=release
+Environment=UPLOAD_LOCATION=/mnt/truenas/pictures/Immich
+Environment=DB_DATA_LOCATION=/home/owen/immich/data
+Environment=DB_USERNAME=postgres
+Environment=DB_DATABASE_NAME=immich
+Secret=POSTGRES_PASSWORD,type=env,target=DB_PASSWORD
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

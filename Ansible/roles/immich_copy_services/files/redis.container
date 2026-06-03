@@ -1,0 +1,16 @@
+[Unit]
+Description=Immich Redis
+Wants=network-online.target
+After=network-online.target
+
+[Container]
+Image=docker.io/valkey/valkey:9@sha256:3b55fbaa0cd93cf0d9d961f405e4dfcc70efe325e2d84da207a0a8e6d8fde4f9
+ContainerName=redis
+HealthCmd=redis-cli ping || exit 1
+Network=immich.network
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

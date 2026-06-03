@@ -49,8 +49,7 @@
   roles:
     - fedora_firewall_enable_ports
 
-# Install application
-- name: Setup Authentik
+- name: Setup Podman
   hosts: authentik
   gather_facts: false
   

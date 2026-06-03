@@ -1,0 +1,25 @@
+[Unit]
+Description=Immich Server
+Wants=network-online.target redis.service database.service
+After=network-online.target redis.service database.service
+
+[Container]
+Image=ghcr.io/immich-app/immich-server:{{ immich_version }}
+ContainerName=immich-server
+PublishPort=2283:2283
+Volume=/mnt/truenas/pictures/Immich:/data:z
+Volume=/etc/localtime:/etc/localtime:ro
+Network=immich.network
+
+Environment=IMMICH_VERSION=release
+Environment=UPLOAD_LOCATION=/mnt/truenas/pictures/Immich
+Environment=DB_DATA_LOCATION=/home/owen/immich/data
+Environment=DB_USERNAME=postgres
+Environment=DB_DATABASE_NAME=immich
+Secret=POSTGRES_PASSWORD,type=env,target=DB_PASSWORD
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
