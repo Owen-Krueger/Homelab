@@ -33,3 +33,10 @@
     daemon_reload: true
   loop: "{{ directories }}"
   become: true
+
+- name: Run initial backups
+  ansible.builtin.systemd_service:
+    name: "{{ app_name }}-{{ item.target_path }}-dir-backup.service"
+    state: started
+  loop: "{{ directories }}"
+  become: true

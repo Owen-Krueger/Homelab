@@ -19,7 +19,7 @@
 
 # Backup/Restore
 - name: Restore and Set Up Backups
-  hosts: obsidian
+  hosts: authentik
   gather_facts: false
 
   vars:
@@ -32,8 +32,6 @@
         target_path: 'templates'
       - source_path: '/home/owen/authentik/blueprints'
         target_path: 'blueprints'
-      - source_path: '/home/owen/authentik/media'
-        target_path: 'media'
 
   roles:
     - backup_directory_restore

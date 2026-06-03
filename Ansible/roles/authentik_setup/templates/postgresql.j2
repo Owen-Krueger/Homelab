@@ -6,7 +6,7 @@ After=network-online.target
 [Container]
 Image=docker.io/library/postgres:16-alpine
 ContainerName=postgresql
-Volume=/home/owen/authentik/database:/var/lib/postgresql/data:Z
+Volume=/home/owen/authentik/database:/var/lib/postgresql/data:z
 Environment=POSTGRES_USER=authentik
 Environment=POSTGRES_DB=authentik
 #Environment=POSTGRES_PASSWORD={{ authentik_db_password }}
