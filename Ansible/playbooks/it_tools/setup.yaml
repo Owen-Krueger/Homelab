@@ -1,0 +1,30 @@
+---
+- name: Setup IT Tools
+  hosts: it-tools
+  gather_facts: false
+
+  roles:
+    - podman_setup
+    - it_tools_setup
+
+- name: Add firewall ports
+  hosts: it-tools
+  gather_facts: false
+
+  vars:
+    ports:
+      - port: 8080
+
+  roles:
+    - fedora_firewall_enable_ports
+
+
+- name: Install container
+  hosts: it-tools
+  gather_facts: false
+
+  vars:
+    service_name: it_tools
+
+  roles:
+    - podman_containers_start

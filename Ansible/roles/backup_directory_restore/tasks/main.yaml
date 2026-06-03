@@ -1,0 +1,43 @@
+---
+- name: Check if backup directories exist
+  ansible.builtin.stat:
+    path: "/mnt/truenas/backup/{{ app_name}}/files/{{ item.target_path }}.tar.gz"
+  register: backup_archive
+  loop: "{{ directories }}"
+  loop_control:
+    index_var: idx
+
+- name: Create temporary directories
+  ansible.builtin.file:
+    path: "/tmp/{{ app_name }}/files/{{ item.target_path }}"
+    state: directory
+    owner: "{{ item.owner | default('owen') }}"
+    group: "{{ item.group | default('owen') }}"
+    mode: '0755'
+  loop: "{{ directories }}"
+  loop_control:
+    index_var: idx
+  when: backup_archive.results[idx].stat.exists
+
+- name: Extract archives
+  ansible.builtin.unarchive:
+    src: "/mnt/truenas/backups/{{ app_name }}/files/{{ item.target_path }}.tar.gz"
+    dest: "/tmp/{{ app_name }}/files/{{ item.target_path }}"
+    remote_src: true
+  loop: "{{ directories }}"
+  loop_control:
+    index_var: idx
+  when: backup_archive.results[idx].stat.exists
+
+- name: Restore files
+  ansible.builtin.copy:
+    src: "/tmp/{{ app_name }}/files/{{ item.target_path }}/"
+    dest: "{{ item.source_path }}/"
+    mode: preserve
+    remote_src: true
+  become: true
+  when: backup_archive.stat.exists
+  loop: "{{ directories }}"
+  loop_control:
+    index_var: idx
+  when: backup_archive.results[idx].stat.exists

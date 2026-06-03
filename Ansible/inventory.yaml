@@ -1,33 +1,40 @@
 all:
   hosts:
-    proxmox:
-      ansible_host: 192.168.200.155
-      ansible_user: root
-    authentik:
-      ansible_host: 192.168.100.153
+    actual-budget:
+      ansible_host: 192.168.100.164
       ansible_user: owen
+      app_name: actual_budget
+      container_number: 123
+      podman_auto_update: true
+    authentik:
+      ansible_host: 192.168.100.157
+      ansible_user: owen
+      app_name: authentik
+      container_number: 116
+      database_name: authentik
+      authentik_version: 2026.5.2
     caddy:
       ansible_host: 192.168.100.151
       ansible_user: owen
-      ansible_python_interpreter: /usr/bin/python3
-    jellyfin:
-      ansible_host: 192.168.200.169
-      ansible_user: owen
-    navidrome:
-      ansible_host: 192.168.100.156
-      ansible_user: owen
-    nextcloud:
-      ansible_host: 192.168.100.159
-      ansible_user: owen
-    matrix:
-      ansible_host: 192.168.100.160
-      ansible_user: owen
-    immich:
-      ansible_host: 192.168.100.155
-      ansible_user: owen
+      app_name: caddy
+      container_number: 110
+      # Get version from https://go.dev/dl/
+      go_version: "1.25.5"
     it-tools:
       ansible_host: 192.168.100.163
       ansible_user: owen
-    plex:
-      ansible_host: 192.168.200.154
+      app_name: it_tools
+      container_number: 122
+      podman_auto_update: true
+    navidrome:
+      ansible_host: 192.168.100.156
       ansible_user: owen
+      app_name: navidrome
+      container_number: 115
+      navidrome_version: "0.61.2"
+    obsidian:
+      ansible_host: 192.168.100.165
+      ansible_user: owen
+      app_name: obsidian
+      container_number: 124
+      podman_auto_update: true

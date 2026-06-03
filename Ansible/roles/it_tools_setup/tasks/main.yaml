@@ -1,0 +1,5 @@
+---
+- name: Copy container to host
+  ansible.builtin.copy:
+    src: it_tools.container
+    dest: '{{ podman_container_directory }}/it_tools.container'

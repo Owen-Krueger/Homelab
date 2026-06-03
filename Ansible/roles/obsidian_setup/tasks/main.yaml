@@ -1,0 +1,60 @@
+---
+- name: Copy local.ini to host
+  ansible.builtin.copy:
+    src: local.ini
+    dest: /home/owen/obsidian/etc
+
+- name: Copy obsidian container to host
+  ansible.builtin.template:
+    src: obsidian.j2
+    dest: '{{ podman_container_directory }}/obsidian.container'
+
+- name: Install obsidian
+  ansible.builtin.include_role:
+    name: podman_containers_start
+  vars:
+    service_name: obsidian
+
+- name: Pause for 1 minute for the app to start up
+  ansible.builtin.pause:
+    minutes: 1
+
+- name: Initialize _users table
+  ansible.builtin.uri:
+    url: "http://{{ obsidian_ip }}:{{ obsidian_port }}/_users"
+    method: PUT
+    user: obsidian
+    password: "{{ obsidian_couchdb_password }}"
+    force_basic_auth: true
+    status_code: [201, 412] # 412 means the table was created previously.
+  no_log: true
+
+- name: Initialize _replicator table
+  ansible.builtin.uri:
+    url: "http://{{ obsidian_ip }}:{{ obsidian_port }}/_replicator"
+    method: PUT
+    user: obsidian
+    password: "{{ obsidian_couchdb_password }}"
+    force_basic_auth: true
+    status_code: [201, 412] # 412 means the table was created previously.
+  no_log: true
+
+- name: Initialize personal_notes table
+  ansible.builtin.uri:
+    url: "http://{{ obsidian_ip }}:{{ obsidian_port }}/personal_notes"
+    method: PUT
+    user: obsidian
+    password: "{{ obsidian_couchdb_password }}"
+    force_basic_auth: true
+    status_code: [201, 412] # 412 means the table was created previously.
+  no_log: true
+
+- name: Initialize work_notes table
+  ansible.builtin.uri:
+    url: "http://{{ obsidian_ip }}:{{ obsidian_port }}/work_notes"
+    method: PUT
+    user: obsidian
+    password: "{{ obsidian_couchdb_password }}"
+    force_basic_auth: true
+    status_code: [201, 412] # 412 means the table was created previously.
+  no_log: true

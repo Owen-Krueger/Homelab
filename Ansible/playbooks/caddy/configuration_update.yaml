@@ -1,0 +1,7 @@
+---
+- name: Update Caddy Configuration
+  hosts: caddy
+  gather_facts: false
+
+  roles:
+    - caddy_configuration_update

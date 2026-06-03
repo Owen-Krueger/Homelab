@@ -1,0 +1,9 @@
+[Unit]
+Description=Daily directory backup timer for {{ app_name }} ({{ item.target_path }})
+
+[Timer]
+OnCalendar=*-*-* 02:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

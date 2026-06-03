@@ -1,0 +1,26 @@
+---
+# Copy files to host
+- name: Copy authentik network to host
+  ansible.builtin.copy:
+    src: authentik.network
+    dest: '{{ podman_container_directory }}/authentik.network'
+
+- name: Copy postgresql container to host
+  ansible.builtin.template:
+    src: postgresql.j2
+    dest: '{{ podman_container_directory }}/postgresql.container'
+  
+- name: Copy redis container to host
+  ansible.builtin.copy:
+    src: redis.container
+    dest: '{{ podman_container_directory }}/redis.container'
+
+- name: Copy worker container to host
+  ansible.builtin.template:
+    src: worker.j2
+    dest: '{{ podman_container_directory }}/worker.container'
+
+- name: Copy server container to host
+  ansible.builtin.template:
+    src: server.j2
+    dest: '{{ podman_container_directory }}/server.container'

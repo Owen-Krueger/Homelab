@@ -1,0 +1,30 @@
+---
+# Configures the container, adding a non-root user to use for SSH.
+- name: Configure Caddy
+  hosts: caddy
+  remote_user: root # root needs to be used initially to set up ansible user.
+  gather_facts: true
+  become: true
+  become_user: root
+
+  vars:
+    config_user: owen
+    ansible_ssh_user: root
+
+  roles:
+    - ubuntu_setup
+
+# Installs Caddy and sets up a Caddyfile.
+- name: Setup Caddy
+  hosts: caddy
+  gather_facts: false
+
+  roles:
+    - caddy_setup
+
+- name: Copy Caddy config
+  hosts: caddy
+  gather_facts: false
+
+  roles:
+    - caddy_configuration_update

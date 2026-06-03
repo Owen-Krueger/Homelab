@@ -1,2 +1,2 @@
 Ansible/proxmox/*
-secrets.yaml
+.vault_pass.txt

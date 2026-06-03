@@ -1,0 +1,22 @@
+---
+#- name: Create bind directory
+#  ansible.builtin.file:
+#    path: "/home/owen/data"
+#    state: directory
+#    mode: '0775'
+
+- name: Add Podman secret (ACTUAL_OPENID_CLIENT_SECRET)
+  containers.podman.podman_secret:
+    state: present
+    name: ACTUAL_OPENID_CLIENT_SECRET
+    data: "{{ actual_budget_openid_client_secret }}"
+
+- name: Copy container to host
+  ansible.builtin.copy:
+    src: actual_budget.container
+    dest: /tmp/actual_budget.container
+  
+- name: Install Actual Budget container
+  containers.podman.podman_quadlet:
+    state: present
+    src: /tmp/actual_budget.container

@@ -1,0 +1,67 @@
+---
+- name: Create directories
+  hosts: obsidian
+  gather_facts: false
+
+  vars:
+    directories:
+      - path: '/home/owen/obsidian/data'
+      - path: '/home/owen/obsidian/etc'
+
+  roles:
+    - common_create_directories
+
+- name: Restore and Set Up Backups
+  hosts: obsidian
+  gather_facts: false
+
+  vars:
+    directories:
+      - source_path: '/home/owen/obsidian/data'
+        target_path: 'data'
+      - source_path: '/home/owen/obsidian/etc'
+        target_path: 'etc'
+
+  roles:
+    - backup_directory_restore
+    - backup_directory_backup
+
+- name: Add firewall ports
+  hosts: obsidian
+  gather_facts: false
+
+  vars:
+    ports:
+      - port: 5984
+
+  roles:
+    - fedora_firewall_enable_ports
+
+- name: Setup Podman
+  hosts: obsidian
+  gather_facts: false
+  
+  roles:
+    - podman_setup
+
+- name: Add Podman secrets
+  hosts: obsidian
+  gather_facts: false
+
+  vars:
+    secrets:
+      - key: COUCHDB_PASSWORD
+        value: "{{ obsidian_couchdb_password }}"
+
+  roles:
+    - podman_secrets_add
+
+- name: Install Obsidian DB
+  hosts: obsidian
+  gather_facts: false
+
+  vars:
+    service_name: obsidian
+
+  roles:
+    - obsidian_setup

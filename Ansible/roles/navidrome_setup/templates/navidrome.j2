@@ -1,0 +1,9 @@
+LogLevel = 'INFO'
+Scanner.Schedule = '@every 24h'
+TranscodingCacheSize = '150MiB'
+MusicFolder = '/mnt/music'
+
+[Backup]
+Path = "/mnt/backups/{{ app_name }}"
+Count = 7
+Schedule = "0 * * * *"

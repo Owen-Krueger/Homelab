@@ -1,0 +1,11 @@
+---
+- name: Restore PostgreSQL database from backup
+  ansible.builtin.shell: >
+    cat /mnt/truenas/backups/{{ app_name }}/database/{{ database_name }}.dump |
+    podman exec -i {{ service_name }} pg_restore -U {{ postgres_user | default('postgres') }} -d {{ database_name }} --clean --if-exists
+
+- name: Restart {{ service_name }}
+  ansible.builtin.systemd_service:
+    state: restarted
+    name: "{{ service_name }}"
+    scope: user

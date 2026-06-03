@@ -1,0 +1,9 @@
+---
+- name: Add firewall ports
+  ansible.posix.firewalld:
+    port: "{{ item.port }}/{{ item.protocol | default('tcp') }}"
+    immediate: true
+    permanent: true
+    state: enabled
+  loop: "{{ ports }}"
+  become: true

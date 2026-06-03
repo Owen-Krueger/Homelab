@@ -1,0 +1,33 @@
+---
+- name: Restore and Set Up Backup (data)
+  hosts: actual-budget
+  gather_facts: false
+
+  vars:
+    backup_source_directory: '/home/owen/data'
+    backup_target_directory: data
+
+  roles:
+    - backup_directory_restore
+    - backup_directory_backup
+
+
+- name: Add firewall ports
+  hosts: actual-budget
+  gather_facts: false
+
+  vars:
+    ports:
+      - port: 5006
+
+  roles:
+    - fedora_firewall_enable_ports
+
+- name: Setup Actual Budget
+  hosts: actual-budget
+  gather_facts: false
+
+  roles:
+    - podman_setup
+    - actual_budget_setup
+

@@ -1,0 +1,29 @@
+[Unit]
+Description=CouchDB for Obsidian Live Sync
+Wants=network-online.target
+After=network-online.target
+
+[Container]
+Image=docker.io/library/couchdb:latest
+ContainerName=obsidian
+
+PublishPort=5984:5984
+
+Volume=/home/owen/obsidian/data:/opt/couchdb/data:Z
+Volume=/home/owen/obsidian/etc:/opt/couchdb/etc/local.d:Z
+
+Environment=COUCHDB_USER=obsidian
+#Environment=COUCHDB_BIND_ADDRESS=0.0.0.0
+Environment=COUCHDB_SINGLE_NODE=true
+Secret=COUCHDB_PASSWORD,type=env,target=COUCHDB_PASSWORD
+
+HealthCmd=curl --fail -s -u $COUCHDB_USER:$COUCHDB_PASSWORD  http://localhost:5984/_up | grep -Eo '\"status\":\"ok\"' || exit 1
+HealthInterval=30s
+HealthRetries=3
+HealthTimeout=10s
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

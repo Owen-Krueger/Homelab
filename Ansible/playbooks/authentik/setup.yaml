@@ -1,0 +1,136 @@
+---
+# Set up directories
+- name: Create directories
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    directories:
+      - path: '/home/owen/authentik/data'
+      - path: '/home/owen/authentik/certs'
+      - path: '/home/owen/authentik/templates'
+      - path: '/home/owen/authentik/blueprints'
+      - path: '/home/owen/authentik/media'
+      - path: '/home/owen/authentik/database'
+      - path: '/home/owen/authentik/redis'
+
+  roles:
+    - common_create_directories
+
+# Backup/Restore
+- name: Restore and Set Up Backups
+  hosts: obsidian
+  gather_facts: false
+
+  vars:
+    directories:
+      - source_path: '/home/owen/authentik/data'
+        target_path: 'data'
+      - source_path: '/home/owen/authentik/certs'
+        target_path: 'certs'
+      - source_path: '/home/owen/authentik/templates'
+        target_path: 'templates'
+      - source_path: '/home/owen/authentik/blueprints'
+        target_path: 'blueprints'
+      - source_path: '/home/owen/authentik/media'
+        target_path: 'media'
+
+  roles:
+    - backup_directory_restore
+    - backup_directory_backup
+
+- name: Add firewall ports
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    ports:
+      - port: 9000
+      - port: 9443
+
+  roles:
+    - fedora_firewall_enable_ports
+
+# Install application
+- name: Setup Authentik
+  hosts: authentik
+  gather_facts: false
+  
+  roles:
+    - podman_setup
+    - authentik_setup
+
+- name: Add Podman secrets
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    secrets:
+      - key: POSTGRES_PASSWORD
+        value: "{{ authentik_db_password }}"
+      - key: AUTHENTIK_POSTGRESQL__PASSWORD
+        value: "{{ authentik_db_password }}"
+      - key: AUTHENTIK_SECRET_KEY
+        value: "{{ authentik_secret_key }}"
+      - key: AUTHENTIK_EMAIL__USERNAME
+        value: "{{ authentik_email_username }}"
+      - key: AUTHENTIK_EMAIL__PASSWORD
+        value: "{{ authentik_email_password }}"
+      - key: AUTHENTIK_EMAIL__FROM
+        value: "{{ authentik_email_from }}"
+
+  roles:
+    - podman_secrets_add
+
+- name: Install postgresql
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    service_name: postgresql
+
+  roles:
+    - podman_containers_start
+
+# This is done after the database is set up, or pg_dump/pg_restore wouldn't work.
+- name: Restore and Set Up Backup Database
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    service_name: postgresql
+    postgres_user: authentik
+
+  roles:
+    - backup_postgresql_restore
+    - backup_postgresql_backup
+
+- name: Install redis
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    service_name: redis
+
+  roles:
+    - podman_containers_start
+
+- name: Install server
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    service_name: server
+
+  roles:
+    - podman_containers_start
+
+- name: Install worker
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    service_name: worker
+
+  roles:
+    - podman_containers_start

@@ -1,0 +1,3 @@
+---
+- name: Create mount point for backup directory
+  ansible.builtin.shell: pct set {{ container_number}} -mp3 /mnt/truenas/backups,mp=/mnt/backups

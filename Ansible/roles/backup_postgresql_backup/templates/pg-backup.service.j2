@@ -1,0 +1,10 @@
+[Unit]
+Description=PostgreSQL backup for {{ app_name }}
+After=postgresql.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c 'podman exec {{ service_name }} pg_dump -U {{ postgres_user | default('postgres') }} -Fc -d {{ database_name }} > /mnt/truenas/backups/{{ app_name }}/database/{{ database_name }}.dump'
+
+[Install]
+WantedBy=multi-user.target
