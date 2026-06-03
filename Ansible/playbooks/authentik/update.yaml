@@ -1,0 +1,11 @@
+---
+- name: Install services
+  hosts: authentik
+  gather_facts: false
+
+  vars:
+    initial_install: false
+
+  roles:
+    - authentik_copy_services
+    - authentik_install_services

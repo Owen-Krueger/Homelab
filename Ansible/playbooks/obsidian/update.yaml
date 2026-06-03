@@ -1,0 +1,11 @@
+---
+- name: Install Obsidian DB
+  hosts: obsidian
+  gather_facts: false
+
+  vars:
+    initial_install: false
+
+  roles:
+    - obsidian_copy_services
+    - obsidian_install_services

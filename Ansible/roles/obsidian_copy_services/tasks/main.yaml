@@ -1,0 +1,5 @@
+---
+- name: Copy obsidian container to host
+  ansible.builtin.template:
+    src: obsidian.j2
+    dest: '{{ podman_container_directory }}/obsidian.container'

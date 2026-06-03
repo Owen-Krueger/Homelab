@@ -5,7 +5,7 @@
 
   roles:
     - podman_setup
-    - it_tools_setup
+    - it_tools_copy_services
 
 - name: Add firewall ports
   hosts: it-tools
