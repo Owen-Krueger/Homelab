@@ -3,11 +3,7 @@
   ansible.builtin.copy:
     src: local.ini
     dest: /home/owen/obsidian/etc
-
-- name: Copy obsidian container to host
-  ansible.builtin.template:
-    src: obsidian.j2
-    dest: '{{ podman_container_directory }}/obsidian.container'
+  when: initial_install | bool == true
 
 - name: Install obsidian
   ansible.builtin.include_role:
@@ -18,6 +14,7 @@
 - name: Pause for 1 minute for the app to start up
   ansible.builtin.pause:
     minutes: 1
+  when: initial_install | bool == true
 
 - name: Initialize _users table
   ansible.builtin.uri:
@@ -28,6 +25,7 @@
     force_basic_auth: true
     status_code: [201, 412] # 412 means the table was created previously.
   no_log: true
+  when: initial_install | bool == true
 
 - name: Initialize _replicator table
   ansible.builtin.uri:
@@ -38,6 +36,7 @@
     force_basic_auth: true
     status_code: [201, 412] # 412 means the table was created previously.
   no_log: true
+  when: initial_install | bool == true
 
 - name: Initialize personal_notes table
   ansible.builtin.uri:
@@ -48,6 +47,7 @@
     force_basic_auth: true
     status_code: [201, 412] # 412 means the table was created previously.
   no_log: true
+  when: initial_install | bool == true
 
 - name: Initialize work_notes table
   ansible.builtin.uri:
@@ -58,3 +58,4 @@
     force_basic_auth: true
     status_code: [201, 412] # 412 means the table was created previously.
   no_log: true
+  when: initial_install | bool == true

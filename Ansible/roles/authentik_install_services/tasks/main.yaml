@@ -1,0 +1,40 @@
+---
+- name: Install postgresql
+  ansible.builtin.include_role:
+    name: podman_containers_start
+  vars:
+    service_name: postgresql
+
+- name: Restore Database
+  ansible.builtin.include_role:
+    name: backup_postgresql_restore
+  vars:
+    service_name: postgresql
+    postgres_user: authentik
+  when: initial_install | bool == true
+
+- name: Set Up Backup Database
+  ansible.builtin.include_role:
+    name: backup_postgresql_backup
+  vars:
+    service_name: postgresql
+    postgres_user: authentik
+  when: initial_install | bool == true
+
+- name: Install redis
+  ansible.builtin.include_role:
+    name: podman_containers_start
+  vars:
+    service_name: redis
+
+- name: Install server
+  ansible.builtin.include_role:
+    name: podman_containers_start
+  vars:
+    service_name: server
+
+- name: Install worker
+  ansible.builtin.include_role:
+    name: podman_containers_start
+  vars:
+    service_name: worker

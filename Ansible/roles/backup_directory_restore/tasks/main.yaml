@@ -1,7 +1,7 @@
 ---
 - name: Check if backup directories exist
   ansible.builtin.stat:
-    path: "/mnt/truenas/backup/{{ app_name}}/files/{{ item.target_path }}.tar.gz"
+    path: "/mnt/truenas/backups/{{ app_name }}/files/{{ item.target_path }}.tar.gz"
   register: backup_archive
   loop: "{{ directories }}"
   loop_control:

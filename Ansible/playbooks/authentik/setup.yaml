@@ -19,7 +19,7 @@
 
 # Backup/Restore
 - name: Restore and Set Up Backups
-  hosts: obsidian
+  hosts: authentik
   gather_facts: false
 
   vars:
@@ -32,8 +32,6 @@
         target_path: 'templates'
       - source_path: '/home/owen/authentik/blueprints'
         target_path: 'blueprints'
-      - source_path: '/home/owen/authentik/media'
-        target_path: 'media'
 
   roles:
     - backup_directory_restore
@@ -58,7 +56,6 @@
   
   roles:
     - podman_setup
-    - authentik_setup
 
 - name: Add Podman secrets
   hosts: authentik
@@ -82,55 +79,13 @@
   roles:
     - podman_secrets_add
 
-- name: Install postgresql
+- name: Install services
   hosts: authentik
   gather_facts: false
 
   vars:
-    service_name: postgresql
+    initial_install: true
 
   roles:
-    - podman_containers_start
-
-# This is done after the database is set up, or pg_dump/pg_restore wouldn't work.
-- name: Restore and Set Up Backup Database
-  hosts: authentik
-  gather_facts: false
-
-  vars:
-    service_name: postgresql
-    postgres_user: authentik
-
-  roles:
-    - backup_postgresql_restore
-    - backup_postgresql_backup
-
-- name: Install redis
-  hosts: authentik
-  gather_facts: false
-
-  vars:
-    service_name: redis
-
-  roles:
-    - podman_containers_start
-
-- name: Install server
-  hosts: authentik
-  gather_facts: false
-
-  vars:
-    service_name: server
-
-  roles:
-    - podman_containers_start
-
-- name: Install worker
-  hosts: authentik
-  gather_facts: false
-
-  vars:
-    service_name: worker
-
-  roles:
-    - podman_containers_start
+    - authentik_copy_services
+    - authentik_install_services

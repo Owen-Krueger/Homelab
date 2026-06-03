@@ -61,7 +61,8 @@
   gather_facts: false
 
   vars:
-    service_name: obsidian
+    initial_install: true
 
   roles:
-    - obsidian_setup
+    - obsidian_copy_services
+    - obsidian_install_services

@@ -7,7 +7,7 @@ After=network-online.target postgresql.service redis.service
 Image=ghcr.io/goauthentik/server:{{ authentik_version }}
 ContainerName=worker
 Exec=worker
-Volume=/home/owen/authentik/media:/media:z
+Volume=/home/owen/authentik/data:/data:z
 Volume=/home/owen/authentik/certs:/certs:z
 Volume=/home/owen/authentik/templates:/templates:z
 Environment=AUTHENTIK_REDIS__HOST=redis
