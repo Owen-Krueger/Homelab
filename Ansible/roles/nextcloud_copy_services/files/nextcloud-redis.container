@@ -1,0 +1,26 @@
+[Unit]
+Description=Nextcloud AIO Redis
+After=nextcloud.network.target
+
+[Container]
+Image=ghcr.io/nextcloud-releases/aio-redis:latest
+ContainerName=nextcloud-redis
+User=999
+#Init=true
+
+Volume=/home/owen/nextcloud/redis:/data:Z
+#Volume=nextcloud_aio_redis.volume:/data:rw
+
+#Environment=REDIS_HOST_PASSWORD=YOUR_REDIS_PASSWORD
+Environment=AIO_LOG_LEVEL=warn
+Environment=TZ=America/Chicago
+ReadOnly=true
+DropCapability=NET_RAW
+Network=nextcloud.network
+Secret=REDIS_HOST_PASSWORD,type=env,target=REDIS_PASSWORD
+
+[Service]
+Restart=unless-stopped
+
+[Install]
+WantedBy=default.target

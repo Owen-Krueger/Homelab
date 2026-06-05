@@ -11,9 +11,9 @@
   vars:
     service_name: obsidian
 
-- name: Pause for 1 minute for the app to start up
+- name: Pause for 30 seconds for the app to start up
   ansible.builtin.pause:
-    minutes: 1
+    seconds: 30
   when: initial_install | bool == true
 
 - name: Initialize _users table

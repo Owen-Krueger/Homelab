@@ -1,0 +1,29 @@
+- name: Copy home-assistant.network to host
+  ansible.builtin.copy:
+    src: home-assistant.network
+    dest: '{{ podman_container_directory }}/home-assistant.network'
+
+- name: Copy home-assistant.container to host
+  ansible.builtin.copy:
+    src: home-assistant.container
+    dest: '{{ podman_container_directory }}/home-assistant.container'
+
+- name: Copy zwave-js.container to host
+  ansible.builtin.copy:
+    src: zwave-js.container
+    dest: '{{ podman_container_directory }}/zwave-js.container'
+
+- name: Copy mosquitto.container to host
+  ansible.builtin.copy:
+    src: mosquitto.container
+    dest: '{{ podman_container_directory }}/mosquitto.container'
+
+- name: Copy zibgee2mqtt.container to host
+  ansible.builtin.copy:
+    src: zigbee2mqtt.container
+    dest: '{{ podman_container_directory }}/zibgee2mqtt.container'
+
+- name: Copy esphome.container to host
+  ansible.builtin.copy:
+    src: esphome.container
+    dest: '{{ podman_container_directory }}/esphome.container'

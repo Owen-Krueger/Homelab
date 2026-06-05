@@ -20,6 +20,11 @@ all:
       container_number: 110
       # Get version from https://go.dev/dl/
       go_version: "1.25.5"
+    home-assistant:
+      ansible_host: 192.168.100.152
+      ansible_user: owen
+      app_name: home_assistant
+      container_number: 111
     immich:
       ansible_host: 192.168.100.155
       ansible_user: owen
@@ -38,6 +43,11 @@ all:
       app_name: navidrome
       container_number: 115
       navidrome_version: "0.61.2"
+    nextcloud:
+      ansible_host: 192.168.100.159
+      ansible_user: owen
+      app_name: nextcloud
+      container_number: 118
     obsidian:
       ansible_host: 192.168.100.165
       ansible_user: owen

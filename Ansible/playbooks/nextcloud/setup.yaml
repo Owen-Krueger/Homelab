@@ -1,0 +1,89 @@
+---
+- name: Create directories
+  hosts: nextcloud
+  gather_facts: false
+
+  vars:
+    directories:
+      - path: '/home/owen/nextcloud/config'
+      - path: '/home/owen/nextcloud/data'
+      #- path: '/home/owen/nextcloud/apache'
+      #- path: '/home/owen/nextcloud/database'
+      #- path: '/home/owen/nextcloud/database_dump'
+      #- path: '/home/owen/nextcloud/ncdata'
+      #- path: '/home/owen/nextcloud/redis'
+
+  roles:
+    - common_create_directories
+
+# Backup/Restore
+- name: Restore and Set Up Backups
+  hosts: nextcloud
+  gather_facts: false
+
+  vars:
+    directories:
+      - source_path: '/home/owen/nextcloud/config'
+        target_path: 'config'
+      - source_path: '/home/owen/nextcloud/data'
+        target_path: 'data'
+      #- source_path: '/home/owen/nextcloud/database'
+      #  target_path: 'database'
+      #- source_path: '/home/owen/nextcloud/ncdata'
+      #  target_path: 'ncdata'
+
+  roles:
+    - backup_directory_restore
+    - backup_directory_backup
+
+- name: Add firewall ports
+  hosts: nextcloud
+  gather_facts: false
+
+  vars:
+    ports:
+      - port: 8080
+      - port: 11000
+#        protocol: tcp
+#      - port: 11000
+#        protocol: udp
+
+  roles:
+    - fedora_firewall_enable_ports
+
+- name: Install Podman
+  hosts: nextcloud
+  gather_facts: false
+
+  vars:
+    initial_install: true
+
+  roles:
+    - podman_setup
+
+#- name: Add Podman secrets
+#  hosts: nextcloud
+#  gather_facts: false
+
+#  vars:
+#    secrets:
+#      - key: POSTGRES_PASSWORD
+#        value: "{{ nextcloud_db_password }}"
+#      - key: ADMIN_PASSWORD
+#        value: "{{ nextcloud_admin_password }}"
+#      - key: REDIS_HOST_PASSWORD
+#        value: "{{ nextcloud_redis_password }}"
+
+#  roles:
+#    - podman_secrets_add
+
+- name: Install Nextcloud
+  hosts: nextcloud
+  gather_facts: false
+
+  vars:
+    initial_install: true
+
+  roles:
+    - nextcloud_copy_services
+    - nextcloud_install_services

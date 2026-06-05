@@ -1,0 +1,23 @@
+[Unit]
+Description=Home Assistant
+Wants=network-online.target
+After=network-online.target
+
+[Container]
+Image=ghcr.io/home-assistant/home-assistant:stable
+ContainerName=homeassistant
+
+Volume=/home/owen/home_assistant/config:/config:Z
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=/run/dbus:/run/dbus:ro
+
+Environment=TZ=America/Chicago
+
+PublishPort=8123:8123
+Network=home_assistant.network
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

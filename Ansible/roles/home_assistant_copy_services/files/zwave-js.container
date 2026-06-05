@@ -1,0 +1,21 @@
+[Unit]
+Description=Z-Wave JS UI
+Wants=network-online.target
+After=network-online.target
+
+[Container]
+Image=docker.io/library/zwave-j-ui:latest
+ContainerName=zwave-js
+
+Volume=/home/owen/home_assistant/zwave:/usr/src/app/store:Z
+AddDevice=/dev/serial/by-id/usb-Nabu_Casa_ZWA-2_80B54EE5B9F4-if00:/dev/zwave
+
+PublishPort=8091:8091
+PublishPort=3000:3000
+Network=home_assistant.network
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

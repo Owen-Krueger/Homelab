@@ -1,0 +1,41 @@
+---
+#- name: Copy nextcloud network to host
+#  ansible.builtin.copy:
+#    src: nextcloud.network
+#    dest: '{{ podman_container_directory }}/nextcloud.network'
+
+#- name: Copy nextcloud-apache.container to host
+#  ansible.builtin.copy:
+#    src: nextcloud-apache.container
+#    dest: '{{ podman_container_directory }}/nextcloud-apache.container'
+
+# This volume specifically didn't like being a mounted path, so I'm letting it be a named volume.
+#- name: Copy database dump volume to host
+#  ansible.builtin.copy:
+#    src: nextcloud-database-dump.volume
+#    dest: '{{ podman_container_directory }}/nextcloud-database-dump.volume'
+
+#- name: Copy nextcloud-database.container to host
+#  ansible.builtin.copy:
+#    src: nextcloud-database.container
+#    dest: '{{ podman_container_directory }}/nextcloud-database.container'
+
+#- name: Copy nextcloud.container to host
+#  ansible.builtin.copy:
+#    src: nextcloud.container
+#    dest: '{{ podman_container_directory }}/nextcloud.container'
+
+#- name: Copy nextcloud-notify-push.container to host
+#  ansible.builtin.copy:
+#    src: nextcloud-notify-push.container
+#    dest: '{{ podman_container_directory }}/nextcloud-notify-push.container'
+
+#- name: Copy nextcloud-redis.container to host
+#  ansible.builtin.copy:
+#    src: nextcloud-redis.container
+#    dest: '{{ podman_container_directory }}/nextcloud-redis.container'
+
+- name: Copy nextcloud.container to host
+  ansible.builtin.copy:
+    src: nextcloud.container
+    dest: '{{ podman_container_directory }}/nextcloud.container'

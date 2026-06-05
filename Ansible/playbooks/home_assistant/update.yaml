@@ -1,0 +1,8 @@
+---
+- name: Install services
+  hosts: home-assistant
+  gather_facts: false
+
+  roles:
+    - home_assistant_copy_services
+    - home_assistant_install_services

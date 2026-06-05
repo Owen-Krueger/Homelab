@@ -1,0 +1,25 @@
+[Unit]
+Description=Nextcloud AIO Notify Push
+After=nextcloud.service
+
+[Container]
+Image=ghcr.io/nextcloud-releases/aio-notify-push:latest
+ContainerName=nextcloud-notify-push
+User=33
+#Init=true
+
+Volume=/home/owen/nextcloud/config:/var/www/html:z
+#Volume=nextcloud_aio_nextcloud.volume:/var/www/html:ro
+
+Environment=NEXTCLOUD_HOST=nextcloud-aio-nextcloud
+Environment=AIO_LOG_LEVEL=warn
+Environment=TZ=America/Chicago
+ReadOnly=true
+DropCapability=NET_RAW
+Network=nextcloud.network
+
+[Service]
+Restart=unless-stopped
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,61 @@
+---
+- name: Create directories
+  hosts: home-assistant
+  gather_facts: false
+
+  vars:
+    directories:
+      - path: '/home/owen/home_assistant/config'
+      - path: '/home/owen/home_assistant/mosquitto'
+      - path: '/home/owen/home_assistant/zigbee2mqtt'
+      - path: '/home/owen/home_assistant/zwave'
+      - path: '/home/owen/home_assistant/esphome'
+
+  roles:
+    - common_create_directories
+
+- name: Restore and Set Up Backups
+  hosts: home-assistant
+  gather_facts: false
+
+  vars:
+    directories:
+      - source_path: '/home/owen/home_assistant/config'
+        target_path: 'config'
+      - source_path: '/home/owen/home_assistant/mosquitto'
+        target_path: 'mosquitto'
+      - source_path: '/home/owen/home_assistant/zigbee2mqtt'
+        target_path: 'zigbee2mqtt'
+      - source_path: '/home/owen/home_assistant/zwave'
+        target_path: 'zwave'
+      - source_path: '/home/owen/home_assistant/esphome'
+        target_path: 'esphome'
+
+  roles:
+    - backup_directory_restore
+    - backup_directory_backup
+
+- name: Add firewall ports
+  hosts: home-assistant
+  gather_facts: false
+
+  vars:
+    ports:
+      - port: 1883
+      - port: 3000
+      - port: 6052
+      - port: 8091
+      - port: 8123
+      - port: 9001
+
+  roles:
+    - fedora_firewall_enable_ports
+
+- name: Setup Home Assistant
+  hosts: home-assistant
+  gather_facts: false
+
+  roles:
+    - podman_setup
+    - home_assistant_copy_services
+    - home_assistant_install_services

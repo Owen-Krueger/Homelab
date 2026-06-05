@@ -1,0 +1,30 @@
+---
+- name: Install home-assistant
+  ansible.builtin.include_role:
+    name: podman_containers_start
+  vars:
+    service_name: home-assistant
+
+- name: Install zwavejs
+  ansible.builtin.include_role:
+    name: podman_containers_start
+  vars:
+    service_name: zwavejs
+
+- name: Install mosquitto
+  ansible.builtin.include_role:
+    name: podman_containers_start
+  vars:
+    service_name: mosquitto
+
+- name: Install zibgee2mqtt
+  ansible.builtin.include_role:
+    name: podman_containers_start
+  vars:
+    service_name: zigbee2mqtt
+
+- name: Install esphome
+  ansible.builtin.include_role:
+    name: podman_containers_start
+  vars:
+    service_name: esphome
