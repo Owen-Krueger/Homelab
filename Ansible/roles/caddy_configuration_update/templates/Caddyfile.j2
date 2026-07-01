@@ -45,6 +45,11 @@
         reverse_proxy {{caddy_nextcloud_ip}}
     }
 
+    @nextcloud2 host cloud2.owenkrueger.com
+    handle @nextcloud2 {
+        reverse_proxy {{caddy_nextcloud_ip_2}}
+    }
+
     @dockge host docker.owenkrueger.com 
     handle @dockge {
         reverse_proxy {{caddy_dockge_ip}}
@@ -93,6 +98,11 @@
     @truenas host nas.owenkrueger.com
     handle @truenas {
         reverse_proxy {{caddy_truenas_ip}}
+    }
+
+    @bentopdf host pdf.owenkrueger.com
+    handle @bentopdf {
+        reverse_proxy {{ caddy_bento_pdf_ip }}
     }
 
     @immich host photos.owenkrueger.com

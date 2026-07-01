@@ -1,0 +1,17 @@
+[Unit]
+Description=Bento PDF
+Wants=network-online.target
+After=network-online.target
+
+[Container]
+Image=ghcr.io/alam00000/bentopdf-simple:latest
+ContainerName=bento-pdf
+AutoUpdate=registry
+
+PublishPort=3000:8080
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

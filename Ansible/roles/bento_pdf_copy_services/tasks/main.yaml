@@ -1,0 +1,5 @@
+---
+- name: Copy container to host
+  ansible.builtin.copy:
+    src: bento_pdf.container
+    dest: '{{ podman_container_directory }}/bento_pdf.container'

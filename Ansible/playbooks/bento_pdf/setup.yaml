@@ -1,0 +1,30 @@
+---
+- name: Setup Bento PDF
+  hosts: bento-pdf
+  gather_facts: false
+
+  roles:
+    - podman_setup
+    - bento_pdf_copy_services
+
+- name: Add firewall ports
+  hosts: bento-pdf
+  gather_facts: false
+
+  vars:
+    ports:
+      - port: 3000
+
+  roles:
+    - fedora_firewall_enable_ports
+
+
+- name: Install container
+  hosts: bento-pdf
+  gather_facts: false
+
+  vars:
+    service_name: bento_pdf
+
+  roles:
+    - podman_containers_start

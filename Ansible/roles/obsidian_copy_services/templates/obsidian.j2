@@ -13,7 +13,6 @@ Volume=/home/owen/obsidian/data:/opt/couchdb/data:Z
 Volume=/home/owen/obsidian/etc:/opt/couchdb/etc/local.d:Z
 
 Environment=COUCHDB_USER=obsidian
-#Environment=COUCHDB_BIND_ADDRESS=0.0.0.0
 Environment=COUCHDB_SINGLE_NODE=true
 Secret=COUCHDB_PASSWORD,type=env,target=COUCHDB_PASSWORD
 
@@ -26,4 +25,4 @@ HealthTimeout=10s
 Restart=always
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
