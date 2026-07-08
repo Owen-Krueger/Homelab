@@ -4,7 +4,7 @@ Wants=network-online.target redis.service database.service
 After=network-online.target redis.service database.service
 
 [Container]
-Image=ghcr.io/immich-app/immich-server:{{ immich_version }}
+Image={{ immich_server_image }}
 ContainerName=immich-server
 PublishPort=2283:2283
 Volume=/mnt/truenas/pictures/Immich:/data:z

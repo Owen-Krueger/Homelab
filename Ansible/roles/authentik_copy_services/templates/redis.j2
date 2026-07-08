@@ -4,7 +4,7 @@ Wants=network-online.target
 After=network-online.target
 
 [Container]
-Image=docker.io/library/redis:alpine
+Image={{ authentik_redis_image }}
 ContainerName=redis
 Exec=--save 60 1 --loglevel warning
 Volume=/home/owen/authentik/redis:/data:Z

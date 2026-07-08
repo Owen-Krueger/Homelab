@@ -1,11 +1,19 @@
 ---
-- name: Install services
+- name: Update services
   hosts: immich
   gather_facts: false
 
   vars:
-    initial_install: false
+    containers:
+      - service_name: database
+        service_image: '{{ immich_database_image }}'
+      - service_name: redis
+        service_image: '{{ immich_redis_image }}'
+      - service_name: machine_learning
+        service_image: '{{ immich_machine_learning_image }}'
+      - service_name: server
+        service_image: '{{ immich_server_image }}'
 
   roles:
-    - immich_copy_services
-    - immich_install_services
+    - immich_copy_services # This is necessary, because some of the containers have hardcoded SHAs, so this makes sure we push the new one to the server.
+    - podman_containers_update

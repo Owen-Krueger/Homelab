@@ -11,8 +11,8 @@
     dest: '{{ podman_container_directory }}/postgresql.container'
 
 - name: Copy redis container to host
-  ansible.builtin.copy:
-    src: redis.container
+  ansible.builtin.template:
+    src: redis.j2
     dest: '{{ podman_container_directory }}/redis.container'
 
 - name: Copy worker container to host

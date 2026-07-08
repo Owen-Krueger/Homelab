@@ -4,7 +4,7 @@ Wants=network-online.target
 After=network-online.target
 
 [Container]
-Image=ghcr.io/immich-app/immich-machine-learning:{{ immich_version }}
+Image={{ immich_machine_learning_image }}
 ContainerName=immich-machine-learning
 Volume=/home/owen/immich/cache:/cache:Z
 Network=immich.network

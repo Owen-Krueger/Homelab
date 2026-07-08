@@ -4,7 +4,7 @@ Wants=network-online.target postgresql.service redis.service
 After=network-online.target postgresql.service redis.service
 
 [Container]
-Image=ghcr.io/goauthentik/server:{{ authentik_version }}
+Image={{ authentik_server_image }}
 ContainerName=server
 Exec=server
 PublishPort=9000:9000
