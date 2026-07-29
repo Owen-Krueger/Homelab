@@ -10,7 +10,9 @@ PublishPort=3000:3000
 AutoUpdate=registry
 Volume=/home/owen/linkwarden/app_data:/data/data:Z
 
-Environment=NEXTAUTH_URL=http://localhost:3000/api/v1/auth
+Environment=NEXTAUTH_URL=https://links.owenkrueger.com/api/v1/auth
+Environment=NEXT_PUBLIC_DISABLE_REGISTRATION=true
+Environment=NEXT_PUBLIC_CREDENTIALS_ENABLED=false
 
 Environment=NEXT_PUBLIC_AUTHENTIK_ENABLED=true
 Environment=AUTHENTIK_CUSTOM_NAME=Authentik
@@ -21,6 +23,8 @@ Secret=DATABASE_URL,type=env,target=DATABASE_URL
 Secret=POSTGRES_PASSWORD,type=env,target=POSTGRES_PASSWORD
 Secret=AUTHENTIK_CLIENT_SECRET,type=env,target=AUTHENTIK_CLIENT_SECRET
 Secret=NEXTAUTH_SECRET,type=env,target=NEXTAUTH_SECRET
+
+Network=linkwarden.network
 
 [Service]
 Restart=always
