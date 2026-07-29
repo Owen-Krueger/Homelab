@@ -1,0 +1,20 @@
+[Unit]
+Description=Postgres for Linkwarden
+Wants=network-online.target
+After=network-online.target
+
+[Container]
+Image=docker.io/library/postgres:16-alpine
+ContainerName=postgres
+Volume=/home/owen/linkwarden/db_data:/var/lib/postgresql/data:Z
+
+Secret=DATABASE_URL,type=env,target=DATABASE_URL
+Secret=POSTGRES_PASSWORD,type=env,target=POSTGRES_PASSWORD
+
+Network=linkwarden.network
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

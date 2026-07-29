@@ -43,6 +43,12 @@ all:
       app_name: it_tools
       container_number: 122
       podman_auto_update: true
+    linkwarden:
+      ansible_host: 192.168.100.167
+      ansible_user: owen
+      app_name: linkwarden
+      container_number: 126
+      podman_auto_update: true
     navidrome:
       ansible_host: 192.168.100.156
       ansible_user: owen

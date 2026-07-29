@@ -1,0 +1,97 @@
+---
+- name: Create directories
+  hosts: linkwarden
+  gather_facts: false
+
+  vars:
+    directories:
+      - path: '/home/owen/linkwarden/db_data'
+      - path: '/home/owen/linkwarden/app_data'
+      - path: '/home/owen/linkwarden/meili_data'
+
+  roles:
+    - common_create_directories
+
+- name: Restore and Set Up Backups
+  hosts: linkwarden
+  gather_facts: false
+
+  vars:
+    directories:
+      - source_path: '/home/owen/linkwarden/app_data'
+        target_path: 'app_data'
+      - source_path: '/home/owen/linkwarden/meili_data'
+        target_path: 'meili_data'
+
+  roles:
+    - backup_directory_restore
+    - backup_directory_backup
+
+- name: Add firewall ports
+  hosts: linkwarden
+  gather_facts: false
+
+  vars:
+    ports:
+      - port: 3000
+      - port: 5432
+
+  roles:
+    - fedora_firewall_enable_ports
+
+- name: Setup Linkwarden
+  hosts: linkwarden
+  gather_facts: false
+  
+  roles:
+    - podman_setup
+    - linkwarden_copy_services
+
+- name: Add Podman secrets
+  hosts: linkwarden
+  gather_facts: false
+
+  vars:
+    secrets:
+      - key: DATABASE_URL
+        value: "{{ linkwarden_db_url }}"
+      - key: POSTGRES_PASSWORD
+        value: "{{ linkwarden_db_password }}"
+      - key: NEXTAUTH_SECRET
+        value: "{{ linkwarden_nextauth_secret }}"
+      - key: AUTHENTIK_CLIENT_SECRET
+        value: "{{ authentik_oidc_linkwarden_client_secret }}"
+
+  roles:
+    - podman_secrets_add
+
+
+- name: Install Postgres container
+  hosts: linkwarden
+  gather_facts: false
+
+  vars:
+    service_name: postgres
+
+  roles:
+    - podman_containers_start
+
+- name: Install Meilisearch container
+  hosts: linkwarden
+  gather_facts: false
+
+  vars:
+    service_name: meilisearch
+
+  roles:
+    - podman_containers_start
+
+- name: Install Linkwarden container
+  hosts: linkwarden
+  gather_facts: false
+
+  vars:
+    service_name: linkwarden
+
+  roles:
+    - podman_containers_start

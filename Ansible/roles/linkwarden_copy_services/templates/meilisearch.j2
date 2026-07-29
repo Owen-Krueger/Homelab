@@ -1,0 +1,16 @@
+[Unit]
+Description=Meili Search
+Wants=network-online.target
+After=network-online.target
+
+[Container]
+Image=docker.io/getmeili/meilisearch:v1.12.8
+ContainerName=meilisearch
+AutoUpdate=registry
+Volume=/home/owen/linkwarden/meili_data:/meili_data:Z
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

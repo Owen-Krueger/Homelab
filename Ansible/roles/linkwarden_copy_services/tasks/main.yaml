@@ -1,0 +1,20 @@
+---
+- name: Copy linkwarden network to host
+  ansible.builtin.copy:
+    src: linkwarden.network
+    dest: '{{ podman_container_directory }}/linkwarden.network'
+
+- name: Copy postgres container to host
+  ansible.builtin.template:
+    src: postgres.j2
+    dest: '{{ podman_container_directory }}/postgres.container'
+
+- name: Copy meilisearch container to host
+  ansible.builtin.template:
+    src: meilisearch.j2
+    dest: '{{ podman_container_directory }}/meilisearch.container'
+
+- name: Copy linkwarden container to host
+  ansible.builtin.template:
+    src: linkwarden.j2
+    dest: '{{ podman_container_directory }}/linkwarden.container'

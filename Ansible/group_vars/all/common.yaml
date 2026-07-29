@@ -3,6 +3,10 @@ podman_container_directory: ~/.config/containers/systemd
 obsidian_ip: 192.168.100.165
 obsidian_port: 5984
 
+# Authentik
+authentik_oidc_linkwarden_client_id: Ihy37fljBEFD51avOe3EIxzKbqoU2Xg621XbZH3n
+authentik_oidc_linkwarden_issuer: https://auth.owenkrueger.com/application/o/linkwarden
+
 # Podman container registries
 authentik_server_image: ghcr.io/goauthentik/server:2026.5.4
 authentik_redis_image: docker.io/library/redis:alpine

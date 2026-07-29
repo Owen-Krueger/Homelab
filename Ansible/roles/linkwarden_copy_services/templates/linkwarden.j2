@@ -1,0 +1,29 @@
+[Unit]
+Description=Linkwarden main container
+Wants=network-online.target postgres.service meilisearch.service
+After=network-online.target postgres.service meilisearch.service
+
+[Container]
+Image=ghcr.io/linkwarden/linkwarden:latest
+ContainerName=linkwarden
+PublishPort=3000:3000
+AutoUpdate=registry
+Volume=/home/owen/linkwarden/app_data:/data/data:Z
+
+Environment=NEXTAUTH_URL=http://localhost:3000/api/v1/auth
+
+Environment=NEXT_PUBLIC_AUTHENTIK_ENABLED=true
+Environment=AUTHENTIK_CUSTOM_NAME=Authentik
+Environment=AUTHENTIK_ISSUER={{authentik_oidc_linkwarden_issuer}}
+Environment=AUTHENTIK_CLIENT_ID={{authentik_oidc_linkwarden_client_id}}
+
+Secret=DATABASE_URL,type=env,target=DATABASE_URL
+Secret=POSTGRES_PASSWORD,type=env,target=POSTGRES_PASSWORD
+Secret=AUTHENTIK_CLIENT_SECRET,type=env,target=AUTHENTIK_CLIENT_SECRET
+Secret=NEXTAUTH_SECRET,type=env,target=NEXTAUTH_SECRET
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

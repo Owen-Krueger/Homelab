@@ -34,9 +34,13 @@
         reverse_proxy {{caddy_authentik_ip}}
     }
 
+    @borg host backup.owenkrueger.com
+    handle @borg {
+        reverse_proxy {{caddy_borg_ip}}
+    }
+
     @actualbudget host budget.owenkrueger.com
     handle @actualbudget {
-
         reverse_proxy {{caddy_actual_budget_ip}}
     }
 
@@ -48,6 +52,11 @@
     @nextcloud2 host cloud2.owenkrueger.com
     handle @nextcloud2 {
         reverse_proxy {{caddy_nextcloud_ip_2}}
+    }
+
+    @forgejo host code.owenkrueger.com
+    handle @forgejo {
+        reverse_proxy {{caddy_forgejo_ip}}
     }
 
     @dockge host docker.owenkrueger.com 
@@ -83,6 +92,16 @@
     @joplin host joplin.owenkrueger.com
     handle @joplin {
         reverse_proxy {{caddy_joplin_ip}}
+    }
+
+    @linkwarden host links.owenkrueger.com
+    handle @linkwarden {
+        reverse_proxy {{caddy_linkwarden_ip}}
+    }
+
+    @dozzle host logs.owenkrueger.com
+    handle @dozzle {
+        reverse_proxy {{caddy_dozzle_ip}}
     }
 
     @navidrome host music.owenkrueger.com
@@ -129,6 +148,11 @@
     @jellyfin host videos.owenkrueger.com
     handle @jellyfin {
         reverse_proxy {{caddy_jellyfin_ip}}
+    }
+
+    @uptime host uptime.owenkrueger.com
+    handle @uptime {
+        reverse_proxy {{caddy_uptime_kuma_ip}}
     }
 
     # Fallback for otherwise unhandled domains

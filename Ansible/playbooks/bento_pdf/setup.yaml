@@ -18,7 +18,6 @@
   roles:
     - fedora_firewall_enable_ports
 
-
 - name: Install container
   hosts: bento-pdf
   gather_facts: false
