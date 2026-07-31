@@ -6,3 +6,4 @@
     data: "{{ item.value }}"
   loop: "{{ secrets }}"
   no_log: true # Prevent us from saving passwords to log files.
+  become: "{{ is_root_container | default(false) }}"

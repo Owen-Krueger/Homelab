@@ -4,8 +4,9 @@
 - name: Stop {{ service_name }}
   ansible.builtin.systemd_service:
     name: '{{ service_name }}'
-    scope: user
+    scope: "{{ 'system' if is_root_container | default(false) else 'user' }}"
     state: stopped
+  become: "{{ is_root_container | default(false) }}"
   ignore_errors: true
 
 #- name: Restart user daemon
@@ -19,4 +20,5 @@
     state: started
     enabled: true
     daemon_reload: true
-    scope: user
+    scope: "{{ 'system' if is_root_container | default(false) else 'user' }}"
+  become: "{{ is_root_container | default(false) }}"

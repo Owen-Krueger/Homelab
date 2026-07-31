@@ -1,0 +1,18 @@
+---
+- name: Copy borg network to host
+  ansible.builtin.copy:
+    src: borg.network
+    dest: '{{ podman_root_container_directory }}/borg.network'
+  become: true
+
+- name: Copy borg container to host
+  ansible.builtin.template:
+    src: borg.j2
+    dest: '{{ podman_root_container_directory }}/borg.container'
+  become: true
+
+- name: Copy apprise container to host
+  ansible.builtin.template:
+    src: apprise.j2
+    dest: '{{ podman_root_container_directory }}/apprise.container'
+  become: true

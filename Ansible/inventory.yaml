@@ -12,12 +12,17 @@ all:
       app_name: authentik
       container_number: 116
       database_name: authentik
-      authentik_version: 2026.5.3
     bento-pdf:
       ansible_host: 192.168.100.166
       ansible_user: owen
       app_name: bento_pdf
       container_number: 125
+      podman_auto_update: true
+    borg:
+      ansible_host: 192.168.100.168
+      ansible_user: owen
+      app_name: borg
+      container_number: 127
       podman_auto_update: true
     caddy:
       ansible_host: 192.168.100.151

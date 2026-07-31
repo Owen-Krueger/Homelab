@@ -1,0 +1,90 @@
+---
+- name: Create directories
+  hosts: borg
+  gather_facts: false
+
+  vars:
+    directories:
+      - path: '/home/owen/borg/config'
+      - path: '/home/owen/borg/repos'
+
+  roles:
+    - common_create_directories
+
+- name: Restore and Set Up Backups
+  hosts: borg
+  gather_facts: false
+
+  vars:
+    directories:
+      - source_path: '/home/owen/borg/config'
+        target_path: 'config'
+      - source_path: '/home/owen/borg/repos'
+        target_path: 'repos'
+
+  roles:
+    - backup_directory_restore
+    - backup_directory_backup
+
+- name: Add firewall ports
+  hosts: borg
+  gather_facts: false
+
+  vars:
+    ports:
+      - port: 3000
+      - port: 2222
+
+  roles:
+    - fedora_firewall_enable_ports
+
+- name: Setup Borg Warehouse
+  hosts: borg
+  gather_facts: false
+  
+  roles:
+    - podman_setup
+    - borg_warehouse_copy_services
+
+- name: Add Podman secrets
+  hosts: borg
+  gather_facts: false
+
+  vars:
+    is_root_container: true
+    secrets:
+      - key: BETTER_AUTH_SECRET
+        value: "{{ borg_better_auth_secret }}"
+      - key: CRONJOB_KEY
+        value: "{{ borg_cronjob_key }}"
+      - key: MAIL_SMTP_LOGIN
+        value: "{{ borg_smtp_username }}"
+      - key: MAIL_SMTP_PWD
+        value: "{{ borg_smtp_password }}"
+      - key: OIDC_CLIENT_SECRET
+        value: "{{ authentik_oidc_borg_client_secret }}"
+
+  roles:
+    - podman_secrets_add
+
+- name: Install Borg Warehouse container
+  hosts: borg
+  gather_facts: false
+
+  vars:
+    service_name: borg
+    is_root_container: true
+
+  roles:
+    - podman_containers_start
+
+- name: Install Borg Apprise container
+  hosts: borg
+  gather_facts: false
+
+  vars:
+    service_name: apprise
+    is_root_container: true
+
+  roles:
+    - podman_containers_start

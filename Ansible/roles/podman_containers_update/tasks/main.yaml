@@ -1,11 +1,13 @@
 - name: Pull new container images
   ansible.builtin.command: podman image pull {{ item.service_image }}
+  become: "{{ true when container_type == 'rootful' else false }}"
+  become: "{{ is_root_container | default(false) }}"
   loop: "{{ containers }}"
 
 - name: Restart containers
   ansible.builtin.systemd_service:
     name: '{{ item.service_name }}'
-    scope: user
     state: restarted
     daemon_reload: true
+    scope: "{{ 'system' if is_root_container | default(false) else 'user' }}"
   loop: "{{ containers }}"
