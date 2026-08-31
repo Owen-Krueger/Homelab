@@ -1,0 +1,15 @@
+[Container]
+ContainerName=audiobookshelf
+Image=ghcr.io/advplyr/audiobookshelf:latest
+AutoUpdate=registry
+NoNewPrivileges=true
+PublishPort=13378:80
+Volume=/mnt/truenas/books/Audiobooks:/audiobooks:Z
+Volume=/home/owen/audiobookshelf/config:/config:Z
+Volume=/home/owen/audiobookshelf/metadata:/metadata:Z
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

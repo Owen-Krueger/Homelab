@@ -1,0 +1,5 @@
+---
+- name: Copy mealie container to host
+  ansible.builtin.template:
+    src: mealie.j2
+    dest: '{{ podman_container_directory }}/mealie.container'

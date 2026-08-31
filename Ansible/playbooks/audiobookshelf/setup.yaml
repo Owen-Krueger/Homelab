@@ -1,0 +1,72 @@
+---
+# Set up directories
+- name: Create directories
+  hosts: audiobookshelf
+  gather_facts: false
+
+  vars:
+    directories:
+      - path: '/home/owen/audiobookshelf/config'
+      - path: '/home/owen/audiobookshelf/metadata'
+
+  roles:
+    - common_create_directories
+
+# Backup/Restore
+- name: Restore and Set Up Backups
+  hosts: audiobookshelf
+  gather_facts: false
+
+  vars:
+    directories:
+      - source_path: '/home/owen/audiobookshelf/config'
+        target_path: 'config'
+      - source_path: '/home/owen/audiobookshelf/metadata'
+        target_path: 'metadata'
+
+  roles:
+    - backup_directory_restore
+    - backup_directory_backup
+
+- name: Mount Books NFS
+  hosts: audiobookshelf
+  gather_facts: false
+
+  tasks:
+    - name: Mount Books NFS Share
+      ansible.posix.mount:
+        src: '{{ nas_ip }}:/mnt/Eve2/NAS/Books'
+        path: /mnt/truenas/books
+        opts: nfsvers=4,rw,sync,hard,_netdev
+        state: mounted
+        fstype: nfs
+      become: true
+
+- name: Add firewall ports
+  hosts: audiobookshelf
+  gather_facts: false
+
+  vars:
+    ports:
+      - port: 13378
+
+  roles:
+    - fedora_firewall_enable_ports
+
+- name: Setup Audiobookshelf
+  hosts: audiobookshelf
+  gather_facts: false
+  
+  roles:
+    - podman_setup
+    - audiobookshelf_copy_services
+
+- name: Install Audiobookshelf container
+  hosts: audiobookshelf
+  gather_facts: false
+
+  vars:
+    service_name: audiobookshelf
+
+  roles:
+    - podman_containers_start

@@ -1,0 +1,5 @@
+---
+- name: Copy audiobookshelf.container to host
+  ansible.builtin.copy:
+    src: audiobookshelf.container
+    dest: '{{ podman_container_directory }}/audiobookshelf.container'

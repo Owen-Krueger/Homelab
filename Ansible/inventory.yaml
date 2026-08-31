@@ -6,6 +6,12 @@ all:
       app_name: actual_budget
       container_number: 123
       podman_auto_update: true
+    audiobookshelf:
+      ansible_host: 192.168.100.172
+      ansible_user: owen
+      app_name: audiobokshelf
+      container_number: 128
+      podman_auto_update: true
     authentik:
       ansible_host: 192.168.100.157
       ansible_user: owen
@@ -53,6 +59,12 @@ all:
       ansible_user: owen
       app_name: linkwarden
       container_number: 126
+      podman_auto_update: true
+    mealie:
+      ansible_host: 192.168.100.173
+      ansible_user: owen
+      app_name: melie
+      container_number: 129
       podman_auto_update: true
     navidrome:
       ansible_host: 192.168.100.156

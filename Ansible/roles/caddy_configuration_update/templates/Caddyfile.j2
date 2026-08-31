@@ -44,6 +44,12 @@
         reverse_proxy {{caddy_actual_budget_ip}}
     }
 
+    @audiobookshelf host audiobooks.owenkrueger.com
+    handle @audiobookshelf {
+        encode gzip zstd
+        reverse_proxy {{ caddy_audiobookshelf_ip }}
+    }
+
     @nextcloud host cloud.owenkrueger.com
     handle @nextcloud {
         reverse_proxy {{caddy_nextcloud_ip}}
@@ -104,6 +110,11 @@
         reverse_proxy {{caddy_dozzle_ip}}
     }
 
+    @mealie host meals.owenkrueger.com
+    handle @mealie {
+        reverse_proxy {{caddy_mealie_ip}}
+    }
+
     @navidrome host music.owenkrueger.com
     handle @navidrome {
         reverse_proxy {{caddy_navidrome_ip}}
@@ -112,11 +123,6 @@
     @obsidian host notes.owenkrueger.com
     handle @obsidian {
         reverse_proxy {{caddy_obsidian_ip}}
-    }
-
-    @truenas host nas.owenkrueger.com
-    handle @truenas {
-        reverse_proxy {{caddy_truenas_ip}}
     }
 
     @bentopdf host pdf.owenkrueger.com

@@ -8,6 +8,9 @@ obsidian_port: 5984
 authentik_oidc_linkwarden_client_id: Ihy37fljBEFD51avOe3EIxzKbqoU2Xg621XbZH3n
 authentik_oidc_linkwarden_issuer: https://auth.owenkrueger.com/application/o/linkwarden
 
+authentik_oidc_mealie_configuration_url: https://auth.owenkrueger.com/application/o/mealie/.well-known/openid-configuration
+authentik_oidc_mealie_client_id: boxFZ334P9rv1ehx2hlSAWTNDHPaG0J9xmAEisF2
+
 # Podman container registries
 authentik_server_image: ghcr.io/goauthentik/server:2026.5.6
 authentik_redis_image: docker.io/library/redis:alpine
